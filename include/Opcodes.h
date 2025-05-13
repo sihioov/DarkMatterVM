@@ -56,6 +56,7 @@ enum class Opcode : uint8_t {
     JLE         = 0x36, ///< 작거나 같으면 점프
     
     // Function Operations
+    CALL        = 0x40, ///< 함수 호출 (반환 주소 푸시)
     RET         = 0x41, ///< 함수에서 반환
     
     // Memory Allocation
