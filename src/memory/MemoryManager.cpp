@@ -9,7 +9,7 @@ namespace DarkMatterVM
 namespace Memory 
 {
 
-// MemorySegment 구현
+/// MemorySegment 구현
 
 MemorySegment::MemorySegment(MemorySegmentType type, size_t size, uint8_t accessFlags)
     : type(type), accessFlags(accessFlags) 
@@ -50,6 +50,7 @@ uint8_t MemorySegment::ReadByte(size_t offset) const
 {
     uint8_t value;
     Read(offset, sizeof(value), &value);
+    
     return value;
 }
 
@@ -57,6 +58,7 @@ uint16_t MemorySegment::ReadUInt16(size_t offset) const
 {
     uint16_t value;
     Read(offset, sizeof(value), &value);
+    
     return value;
 }
 
@@ -64,6 +66,7 @@ uint32_t MemorySegment::ReadUInt32(size_t offset) const
 {
     uint32_t value;
     Read(offset, sizeof(value), &value);
+    
     return value;
 }
 
@@ -71,6 +74,7 @@ uint64_t MemorySegment::ReadUInt64(size_t offset) const
 {
     uint64_t value;
     Read(offset, sizeof(value), &value);
+    
     return value;
 }
 
@@ -94,8 +98,7 @@ void MemorySegment::WriteUInt64(size_t offset, uint64_t value)
     Write(offset, sizeof(value), &value);
 }
 
-// MemoryManager 구현
-
+/// MemoryManager 구현
 MemoryManager::MemoryManager(size_t codeSize, size_t stackSize, size_t heapSize) 
 {
     // 코드 세그먼트 생성 (읽기, 실행 권한)
@@ -215,7 +218,6 @@ uint64_t MemoryManager::PopUInt64()
     return value;
 }
 
-// 간단한 힙 메모리 관리 구현
 size_t MemoryManager::AllocateHeap(size_t size) 
 {
     // 힙 세그먼트 가져오기

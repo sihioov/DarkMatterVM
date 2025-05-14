@@ -51,8 +51,10 @@ int Interpreter::Execute(size_t startAddress)
     _running = true;
     
     // 바이트코드 실행 루프
-    while (_running) {
-        if (!Step()) {
+    while (_running) 
+    {
+        if (!Step()) 
+        {
             break;
         }
     }
@@ -62,7 +64,8 @@ int Interpreter::Execute(size_t startAddress)
 
 bool Interpreter::Step()
 {
-    if (!_running) {
+    if (!_running) 
+    {
         return false;
     }
     
@@ -72,7 +75,8 @@ bool Interpreter::Step()
         
         // 핸들러 찾기 (decode)
         auto it = _opcodeHandlers.find(opcode);
-        if (it == _opcodeHandlers.end()) {
+        if (it == _opcodeHandlers.end()) 
+        {
             std::stringstream ss;
             ss << "알 수 없는 명령어: 0x" << std::hex << static_cast<int>(opcode);
             throw std::runtime_error(ss.str());
@@ -86,11 +90,13 @@ bool Interpreter::Step()
     catch (const Memory::MemoryAccessException& e) {
         std::cerr << "메모리 접근 오류: " << e.what() << std::endl;
         _running = false;
+
         return false;
     }
     catch (const std::exception& e) {
         std::cerr << "VM 실행 오류: " << e.what() << std::endl;
         _running = false;
+
         return false;
     }
 }
@@ -122,7 +128,7 @@ uint8_t Interpreter::_FetchByte()
     uint8_t byte = codeSegment.ReadByte(_ip);
     
     // IP 증가
-    _ip++;
+    ++_ip;
     
     return byte;
 }
@@ -318,7 +324,8 @@ void Interpreter::_Handle_DIV()
     uint64_t b = _memory->PopUInt64();
     uint64_t a = _memory->PopUInt64();
     
-    if (b == 0) {
+    if (b == 0) 
+    {
         throw std::runtime_error("0으로 나누기 시도");
     }
     
@@ -330,7 +337,8 @@ void Interpreter::_Handle_MOD()
     uint64_t b = _memory->PopUInt64();
     uint64_t a = _memory->PopUInt64();
     
-    if (b == 0) {
+    if (b == 0) 
+    {
         throw std::runtime_error("0으로 나누기 시도 (나머지 연산)");
     }
     
@@ -371,9 +379,12 @@ void Interpreter::_Handle_SHL()
     uint64_t a = _memory->PopUInt64();
     
     // 시프트 양이 64 이상이면 결과는 0
-    if (b >= 64) {
+    if (b >= 64) 
+    {
         _memory->PushUInt64(0);
-    } else {
+    } 
+    else 
+    {
         _memory->PushUInt64(a << b);
     }
 }
@@ -384,9 +395,12 @@ void Interpreter::_Handle_SHR()
     uint64_t a = _memory->PopUInt64();
     
     // 시프트 양이 64 이상이면 결과는 0
-    if (b >= 64) {
+    if (b >= 64) 
+    {
         _memory->PushUInt64(0);
-    } else {
+    } 
+    else 
+    {
         _memory->PushUInt64(a >> b);
     }
 }
@@ -439,7 +453,8 @@ void Interpreter::_Handle_JZ()
     int16_t offset = _FetchInt16();
     
     // 조건이 0이면 점프
-    if (condition == 0) {
+    if (condition == 0) 
+    {
         _ip += offset;
     }
 }
@@ -453,7 +468,8 @@ void Interpreter::_Handle_JNZ()
     int16_t offset = _FetchInt16();
     
     // 조건이 0이 아니면 점프
-    if (condition != 0) {
+    if (condition != 0) 
+    {
         _ip += offset;
     }
 }
@@ -464,7 +480,8 @@ void Interpreter::_Handle_JNZ()
 void Interpreter::_Handle_HALT()
 {
     // 마지막 스택 값을 반환 값으로 설정 (있는 경우)
-    if (_memory->GetStackPointer() < _memory->GetSegment(Memory::MemorySegmentType::STACK).GetSize()) {
+    if (_memory->GetStackPointer() < _memory->GetSegment(Memory::MemorySegmentType::STACK).GetSize()) 
+    {
         _returnValue = _memory->PopUInt64();
     }
     
@@ -472,8 +489,19 @@ void Interpreter::_Handle_HALT()
     _running = false;
 }
 
-// 아직 미구현된 핸들러들 - 기본 구현만 제공
-void Interpreter::_Handle_LOAD16() { /* TODO */ }
+void Interpreter::_Handle_LOAD16() 
+{
+    // 주소를 스택에서 가져옴
+    uint64_t address = _memory->PopUInt64();
+    
+    // 힙 메모리에서 2바이트 읽기
+    auto& heapSegment = _memory->GetSegment(Memory::MemorySegmentType::HEAP);
+    uint16_t value = heapSegment.ReadUInt16(static_cast<size_t>(address));
+    
+    // 결과를 스택에 푸시
+    _memory->PushUInt64(value);
+}
+
 void Interpreter::_Handle_LOAD32() { /* TODO */ }
 void Interpreter::_Handle_LOAD64() { /* TODO */ }
 void Interpreter::_Handle_STORE16() { /* TODO */ }
