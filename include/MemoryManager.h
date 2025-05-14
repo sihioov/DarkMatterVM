@@ -21,10 +21,10 @@ enum class MemoryAccessFlags : uint8_t {
  * @brief 메모리 구역 유형
  */
 enum class MemorySegmentType : uint8_t {
-    CODE,       ///< 코드 영역
-    STACK,      ///< 스택 영역
-    HEAP,       ///< 힙 영역
-    CONSTANT    ///< 상수 영역
+    CODE,       ///< 코드 세그먼트 (바이트코드 저장)
+    STACK,      ///< 스택 세그먼트 (스택 및 호출 스택)
+    HEAP,       ///< 힙 세그먼트 (동적 할당)
+    CONSTANT    ///< 상수 세그먼트 (읽기 전용 데이터)
 };
 
 /**
@@ -289,4 +289,4 @@ private:
 };
 
 } // namespace Memory
-} // namespace DarkMatterVM
+} // namespace DarkMatterVM 
