@@ -22,6 +22,10 @@
   - `AST` (ASTNode 정의)  
   - `CodeGen` (BytecodeBuilder)  
   - `Optimizer` (ConstantFolding 등)  
+  - `Assembler` (어셈블리 코드를 바이트코드로 변환, 개발/테스트 도구)
+    - Parser (어셈블리 구문 파싱)
+    - SymbolTable (레이블, 심볼 관리)
+    - CodeEmitter (바이트코드 생성)
 
 ### Packer  
 - **역할**: 바이트코드를 실행 파일의 커스텀 섹션에 삽입  
@@ -141,6 +145,10 @@ DarkMatterVM/
 │       │   │   └── BytecodeBuilder.h
 │       │   ├── Optimizer/
 │       │   │   └── ConstantFolding.h
+│       │   ├── Assembler/
+│       │   │   ├── Parser.h
+│       │   │   ├── SymbolTable.h
+│       │   │   └── CodeEmitter.h
 │       │   └── Translator.h
 │       ├── Packer/
 │       │   ├── SectionBuilder.h
@@ -179,6 +187,10 @@ DarkMatterVM/
 │   │   │   └── BytecodeBuilder.cpp
 │   │   ├── optimizer/
 │   │   │   └── ConstantFolding.cpp
+│   │   ├── assembler/
+│   │   │   ├── Parser.cpp
+│   │   │   ├── SymbolTable.cpp
+│   │   │   └── CodeEmitter.cpp
 │   │   └── Translator.cpp
 │   ├── packer/
 │   │   ├── sections/
@@ -214,7 +226,8 @@ DarkMatterVM/
 │       └── ControlFlowManager.cpp
 ├── tests/
 │   ├── translator/
-│   │   └── TestTranslator.cpp
+│   │   ├── TestTranslator.cpp
+│   │   └── TestAssembler.cpp
 │   ├── engine/
 │   │   └── TestInterpreter.cpp
 │   └── memory/
