@@ -502,21 +502,229 @@ void Interpreter::_Handle_LOAD16()
     _memory->PushUInt64(value);
 }
 
-void Interpreter::_Handle_LOAD32() { /* TODO */ }
-void Interpreter::_Handle_LOAD64() { /* TODO */ }
-void Interpreter::_Handle_STORE16() { /* TODO */ }
-void Interpreter::_Handle_STORE32() { /* TODO */ }
-void Interpreter::_Handle_STORE64() { /* TODO */ }
-void Interpreter::_Handle_JG() { /* TODO */ }
-void Interpreter::_Handle_JL() { /* TODO */ }
-void Interpreter::_Handle_JGE() { /* TODO */ }
-void Interpreter::_Handle_JLE() { /* TODO */ }
-void Interpreter::_Handle_CALL() { /* TODO */ }
-void Interpreter::_Handle_RET() { /* TODO */ }
-void Interpreter::_Handle_ALLOC() { /* TODO */ }
-void Interpreter::_Handle_FREE() { /* TODO */ }
-void Interpreter::_Handle_HOSTCALL() { /* TODO */ }
-void Interpreter::_Handle_THREAD() { /* TODO */ }
+void Interpreter::_Handle_LOAD32()
+{
+    // 주소를 스택에서 가져옴
+    uint64_t address = _memory->PopUInt64();
+    
+    // 힙 메모리에서 4바이트 읽기
+    auto& heapSegment = _memory->GetSegment(Memory::MemorySegmentType::HEAP);
+    uint32_t value = heapSegment.ReadUInt32(static_cast<size_t>(address));
+    
+    // 결과를 스택에 푸시
+    _memory->PushUInt64(value);
+}
+
+void Interpreter::_Handle_LOAD64()
+{
+    // 주소를 스택에서 가져옴
+    uint64_t address = _memory->PopUInt64();
+    
+    // 힙 메모리에서 8바이트 읽기
+    auto& heapSegment = _memory->GetSegment(Memory::MemorySegmentType::HEAP);
+    uint64_t value = heapSegment.ReadUInt64(static_cast<size_t>(address));
+    
+    // 결과를 스택에 푸시
+    _memory->PushUInt64(value);
+}
+
+void Interpreter::_Handle_STORE16()
+{
+    // 값을 스택에서 가져옴
+    uint64_t value = _memory->PopUInt64();
+    
+    // 주소를 스택에서 가져옴
+    uint64_t address = _memory->PopUInt64();
+    
+    // 힙 메모리에 2바이트 쓰기
+    auto& heapSegment = _memory->GetSegment(Memory::MemorySegmentType::HEAP);
+    heapSegment.WriteUInt16(static_cast<size_t>(address), static_cast<uint16_t>(value));
+}
+
+void Interpreter::_Handle_STORE32()
+{
+    // 값을 스택에서 가져옴
+    uint64_t value = _memory->PopUInt64();
+    
+    // 주소를 스택에서 가져옴
+    uint64_t address = _memory->PopUInt64();
+    
+    // 힙 메모리에 4바이트 쓰기
+    auto& heapSegment = _memory->GetSegment(Memory::MemorySegmentType::HEAP);
+    heapSegment.WriteUInt32(static_cast<size_t>(address), static_cast<uint32_t>(value));
+}
+
+void Interpreter::_Handle_STORE64()
+{
+    // 값을 스택에서 가져옴
+    uint64_t value = _memory->PopUInt64();
+    
+    // 주소를 스택에서 가져옴
+    uint64_t address = _memory->PopUInt64();
+    
+    // 힙 메모리에 8바이트 쓰기
+    auto& heapSegment = _memory->GetSegment(Memory::MemorySegmentType::HEAP);
+    heapSegment.WriteUInt64(static_cast<size_t>(address), value);
+}
+
+void Interpreter::_Handle_JG()
+{
+    // 두 번째 값
+    uint64_t b = _memory->PopUInt64();
+    
+    // 첫 번째 값
+    uint64_t a = _memory->PopUInt64();
+    
+    // 점프 오프셋 가져오기
+    int16_t offset = _FetchInt16();
+    
+    // a > b 이면 점프 (Greater Than)
+    if (a > b) 
+    {
+        _ip += offset;
+    }
+}
+
+void Interpreter::_Handle_JL()
+{
+    // 두 번째 값
+    uint64_t b = _memory->PopUInt64();
+    
+    // 첫 번째 값
+    uint64_t a = _memory->PopUInt64();
+    
+    // 점프 오프셋 가져오기
+    int16_t offset = _FetchInt16();
+    
+    // a < b 이면 점프 (Less Than)
+    if (a < b) 
+    {
+        _ip += offset;
+    }
+}
+
+void Interpreter::_Handle_JGE()
+{
+    // 두 번째 값
+    uint64_t b = _memory->PopUInt64();
+    
+    // 첫 번째 값
+    uint64_t a = _memory->PopUInt64();
+    
+    // 점프 오프셋 가져오기
+    int16_t offset = _FetchInt16();
+    
+    // a >= b 이면 점프 (Greater Than or Equal)
+    if (a >= b) 
+    {
+        _ip += offset;
+    }
+}
+
+void Interpreter::_Handle_JLE()
+{
+    // 두 번째 값
+    uint64_t b = _memory->PopUInt64();
+    
+    // 첫 번째 값
+    uint64_t a = _memory->PopUInt64();
+    
+    // 점프 오프셋 가져오기
+    int16_t offset = _FetchInt16();
+    
+    // a <= b 이면 점프 (Less Than or Equal)
+    if (a <= b) 
+    {
+        _ip += offset;
+    }
+}
+
+void Interpreter::_Handle_CALL()
+{
+    // 호출할 함수 주소 가져오기
+    uint64_t targetAddress = _memory->PopUInt64();
+    
+    // 현재 명령어 포인터를 스택에 저장 (반환 주소)
+    _memory->PushUInt64(_ip);
+    
+    // 함수 주소로 점프
+    _ip = static_cast<size_t>(targetAddress);
+}
+
+void Interpreter::_Handle_RET()
+{
+    // 반환 주소를 스택에서 가져옴
+    uint64_t returnAddress = _memory->PopUInt64();
+    
+    // 반환 주소로 점프
+    _ip = static_cast<size_t>(returnAddress);
+}
+
+void Interpreter::_Handle_ALLOC()
+{
+    // 할당할 메모리 크기를 스택에서 가져옴
+    uint64_t size = _memory->PopUInt64();
+    
+    // 메모리 할당
+    size_t address = _memory->AllocateHeap(static_cast<size_t>(size));
+    
+    // 할당된 메모리 주소를 스택에 푸시
+    _memory->PushUInt64(address);
+}
+
+void Interpreter::_Handle_FREE()
+{
+    // 해제할 메모리 주소를 스택에서 가져옴
+    uint64_t address = _memory->PopUInt64();
+    
+    // 메모리 해제
+    _memory->FreeHeap(static_cast<size_t>(address));
+}
+
+void Interpreter::_Handle_HOSTCALL()
+{
+    // 호스트 함수 ID를 가져옴
+    uint8_t functionId = _FetchByte();
+    
+    // 현재는 구현이 간단하므로 기본적인 호스트 함수만 지원
+    // 실제 구현에서는 호스트 함수 테이블을 사용하여 확장 가능
+    switch (functionId) {
+        case 0: // 값 출력
+        {
+            uint64_t value = _memory->PopUInt64();
+            std::cout << "호스트 출력: " << value << std::endl;
+            break;
+        }
+        case 1: // 문자 출력
+        {
+            uint64_t value = _memory->PopUInt64();
+            std::cout << "호스트 문자 출력: " << static_cast<char>(value) << std::endl;
+            break;
+        }
+        default:
+            throw std::runtime_error("알 수 없는 호스트 함수 ID: " + std::to_string(functionId));
+    }
+}
+
+void Interpreter::_Handle_THREAD()
+{
+    // 현재는 단일 스레드 실행만 지원
+    // 향후 멀티스레딩 지원을 위한 기본 구조만 구현
+    
+    // 스레드 함수 주소
+    uint64_t threadFunction = _memory->PopUInt64();
+    
+    // 스레드 파라미터
+    uint64_t threadParam = _memory->PopUInt64();
+    
+    // 스레드 생성은 아직 지원하지 않으므로 경고 출력
+    std::cerr << "경고: 스레드 기능은 아직 구현되지 않았습니다." << std::endl;
+    std::cerr << "  함수 주소: 0x" << std::hex << threadFunction << std::endl;
+    std::cerr << "  파라미터: 0x" << std::hex << threadParam << std::dec << std::endl;
+    
+    // 스레드 ID를 스택에 넣음 (현재는 항상 0)
+    _memory->PushUInt64(0);
+}
 
 } // namespace Engine
 } // namespace DarkMatterVM

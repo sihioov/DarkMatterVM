@@ -19,10 +19,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\engine\Interpreter.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\memory\MemoryManager.cpp" />
+    <ClCompile Include="src\memory\MemorySegment.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Opcodes.h" />
+    <ClInclude Include="src\engine\Interpreter.h" />
+    <ClInclude Include="src\memory\MemoryManager.h" />
+    <ClInclude Include="src\translator\assembler\CodeEmitter.h" />
+    <ClInclude Include="src\translator\assembler\Parser.h" />
+    <ClInclude Include="src\translator\assembler\SymbolTable.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
