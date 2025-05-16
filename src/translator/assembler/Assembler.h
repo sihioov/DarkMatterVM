@@ -3,9 +3,9 @@
 #include <string>
 #include <vector>
 #include <memory>
-#include "assembler/Parser.h"
-#include "assembler/SymbolTable.h"
-#include "assembler/CodeEmitter.h"
+#include "Parser.h"
+#include "SymbolTable.h"
+#include "CodeEmitter.h"
 
 namespace DarkMatterVM 
 {
