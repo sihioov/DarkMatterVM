@@ -22,7 +22,10 @@
     <ClCompile Include="src\engine\Interpreter.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\memory\MemoryManager.cpp" />
-    <ClCompile Include="src\memory\MemorySegment.cpp" />
+    <ClCompile Include="src\translator\assembler\Assembler.cpp" />
+    <ClCompile Include="src\translator\assembler\CodeEmitter.cpp" />
+    <ClCompile Include="src\translator\assembler\Parser.cpp" />
+    <ClCompile Include="src\translator\assembler\SymbolTable.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Opcodes.h" />

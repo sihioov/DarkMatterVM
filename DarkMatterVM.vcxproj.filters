@@ -31,11 +31,20 @@
     <ClCompile Include="src\memory\MemoryManager.cpp">
       <Filter>src\memory</Filter>
     </ClCompile>
-    <ClCompile Include="src\memory\MemorySegment.cpp">
-      <Filter>src\memory</Filter>
-    </ClCompile>
     <ClCompile Include="src\engine\Interpreter.cpp">
       <Filter>src\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\assembler\SymbolTable.cpp">
+      <Filter>src\tanslator\assembler</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\assembler\Assembler.cpp">
+      <Filter>src\tanslator\assembler</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\assembler\CodeEmitter.cpp">
+      <Filter>src\tanslator\assembler</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\assembler\Parser.cpp">
+      <Filter>src\tanslator\assembler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

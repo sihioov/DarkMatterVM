@@ -103,12 +103,12 @@ bool Interpreter::Step()
 
 void Interpreter::DumpState() const
 {
-    std::cout << "===== VM 상태 덤프 =====" << std::endl;
+    /*std::cout << "===== VM 상태 덤프 =====" << std::endl;
     std::cout << "IP: 0x" << std::hex << _ip << std::endl;
     std::cout << "실행 중: " << (_running ? "예" : "아니오") << std::endl;
     std::cout << "반환 값: 0x" << std::hex << _returnValue << " (" << std::dec << _returnValue << ")" << std::endl;
     std::cout << "스택 포인터: 0x" << std::hex << _memory->GetStackPointer() << std::endl;
-    std::cout << "=========================" << std::endl;
+    std::cout << "=========================" << std::endl;*/
 }
 
 void Interpreter::PushParameter(uint64_t value)
