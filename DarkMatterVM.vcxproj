@@ -31,6 +31,7 @@
     <ClInclude Include="include\Opcodes.h" />
     <ClInclude Include="src\engine\Interpreter.h" />
     <ClInclude Include="src\memory\MemoryManager.h" />
+    <ClInclude Include="src\translator\assembler\Assembler.h" />
     <ClInclude Include="src\translator\assembler\CodeEmitter.h" />
     <ClInclude Include="src\translator\assembler\Parser.h" />
     <ClInclude Include="src\translator\assembler\SymbolTable.h" />

@@ -66,5 +66,8 @@
     <ClInclude Include="src\translator\assembler\Parser.h">
       <Filter>src\tanslator\assembler</Filter>
     </ClInclude>
+    <ClInclude Include="src\translator\assembler\Assembler.h">
+      <Filter>src\tanslator\assembler</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
