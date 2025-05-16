@@ -3,15 +3,18 @@
 #include <algorithm>
 #include <map>
 
-namespace DarkMatterVM {
-namespace Translator {
-namespace Assembler {
+namespace DarkMatterVM 
+{
+namespace Translator 
+{
+namespace Assembler 
+{
 
 Parser::Parser() 
-    : _currentPos(0), _currentLine(1), _currentColumn(1), _hasError(false) {
-}
+    : _currentPos(0), _currentLine(1), _currentColumn(1), _hasError(false) {}
 
-bool Parser::Parse(const std::string& sourceCode) {
+bool Parser::Parse(const std::string& sourceCode) 
+{
     // 초기화
     _sourceCode = sourceCode;
     _tokens.clear();
@@ -22,45 +25,54 @@ bool Parser::Parse(const std::string& sourceCode) {
     _hasError = false;
     
     // 소스 코드가 비어있는 경우
-    if (_sourceCode.empty()) {
+    if (_sourceCode.empty()) 
+    {
         return true;
     }
     
     // 토큰 파싱
-    while (_currentPos < _sourceCode.length()) {
+    while (_currentPos < _sourceCode.length()) 
+    {
         char c = _CurrentChar();
         
         // 공백 건너뛰기
-        if (std::isspace(c)) {
+        if (std::isspace(c)) 
+        {
             _SkipWhitespace();
             continue;
         }
         
         // 주석 건너뛰기
-        if (c == ';') {
+        if (c == ';') 
+        {
             _SkipComment();
             continue;
         }
         
         // 숫자 처리
         if (std::isdigit(c) || (c == '-' && _currentPos + 1 < _sourceCode.length() && 
-                               std::isdigit(_sourceCode[_currentPos + 1]))) {
-            if (!_ParseNumber()) {
+                               std::isdigit(_sourceCode[_currentPos + 1]))) 
+        {
+            if (!_ParseNumber()) 
+            {
                 return false;
             }
             continue;
         }
         
         // 식별자 처리 (명령어, 레이블 등)
-        if (std::isalpha(c) || c == '_' || c == '.') {
-            if (!_ParseIdentifier()) {
+        if (std::isalpha(c) || c == '_' || c == '.') 
+        {
+            if (!_ParseIdentifier()) 
+            {
                 return false;
             }
             continue;
         }
         
         // 새 줄 처리
-        if (c == '\n') {
+        if (c == '\n') 
+        {
             Token token;
             token.type = TokenType::EOL;
             token.text = "EOL";
@@ -88,34 +100,40 @@ bool Parser::Parse(const std::string& sourceCode) {
     return !_hasError;
 }
 
-bool Parser::_ParseNextToken() {
+bool Parser::_ParseNextToken() 
+{
     char c = _CurrentChar();
     
     // 공백 건너뛰기
-    if (std::isspace(c)) {
+    if (std::isspace(c)) 
+    {
         _SkipWhitespace();
         return true;
     }
     
     // 주석 건너뛰기
-    if (c == ';') {
+    if (c == ';') 
+    {
         _SkipComment();
         return true;
     }
     
     // 숫자 처리
     if (std::isdigit(c) || (c == '-' && _currentPos + 1 < _sourceCode.length() && 
-                           std::isdigit(_sourceCode[_currentPos + 1]))) {
+                           std::isdigit(_sourceCode[_currentPos + 1]))) 
+    {
         return _ParseNumber();
     }
     
     // 식별자 처리 (명령어, 레이블 등)
-    if (std::isalpha(c) || c == '_' || c == '.') {
+    if (std::isalpha(c) || c == '_' || c == '.') 
+    {
         return _ParseIdentifier();
     }
     
     // 새 줄 처리
-    if (c == '\n') {
+    if (c == '\n') 
+    {
         Token token;
         token.type = TokenType::EOL;
         token.text = "EOL";
@@ -132,11 +150,14 @@ bool Parser::_ParseNextToken() {
     return false;
 }
 
-void Parser::_SkipWhitespace() {
-    while (_currentPos < _sourceCode.length()) {
+void Parser::_SkipWhitespace() 
+{
+    while (_currentPos < _sourceCode.length()) 
+    {
         char c = _CurrentChar();
         
-        if (!std::isspace(c) || c == '\n') {
+        if (!std::isspace(c) || c == '\n') 
+        {
             break;
         }
         
@@ -144,20 +165,24 @@ void Parser::_SkipWhitespace() {
     }
 }
 
-void Parser::_SkipComment() {
+void Parser::_SkipComment() 
+{
     // ';'로 시작하는 한 줄 주석
-    while (_currentPos < _sourceCode.length() && _CurrentChar() != '\n') {
+    while (_currentPos < _sourceCode.length() && _CurrentChar() != '\n') 
+    {
         _NextChar();
     }
 }
 
-bool Parser::_ParseNumber() {
+bool Parser::_ParseNumber() 
+{
     size_t startPos = _currentPos;
     size_t startLine = _currentLine;
     size_t startColumn = _currentColumn;
     
     bool isNegative = false;
-    if (_CurrentChar() == '-') {
+    if (_CurrentChar() == '-') 
+    {
         isNegative = true;
         _NextChar();
     }
@@ -168,36 +193,49 @@ bool Parser::_ParseNumber() {
     
     // 16진수 확인
     if (_CurrentChar() == '0' && _currentPos + 1 < _sourceCode.length() && 
-        (_sourceCode[_currentPos + 1] == 'x' || _sourceCode[_currentPos + 1] == 'X')) {
+        (_sourceCode[_currentPos + 1] == 'x' || _sourceCode[_currentPos + 1] == 'X')) 
+    {
         _NextChar(); // '0' 건너뛰기
         _NextChar(); // 'x' 건너뛰기
         isHex = true;
         
-        while (_currentPos < _sourceCode.length()) {
+        while (_currentPos < _sourceCode.length()) 
+        {
             char c = _CurrentChar();
             
-            if (std::isdigit(c)) {
+            if (std::isdigit(c)) 
+            {
                 value = value * 16 + (c - '0');
-            } else if (c >= 'a' && c <= 'f') {
+            } 
+            else if (c >= 'a' && c <= 'f') 
+            {
                 value = value * 16 + (c - 'a' + 10);
-            } else if (c >= 'A' && c <= 'F') {
+            } 
+            else if (c >= 'A' && c <= 'F') 
+            {
                 value = value * 16 + (c - 'A' + 10);
-            } else {
+            } 
+            else 
+            {
                 break;
             }
             
             _NextChar();
         }
-    } else {
+    } 
+    else 
+    {
         // 10진수 파싱
-        while (_currentPos < _sourceCode.length() && std::isdigit(_CurrentChar())) {
+        while (_currentPos < _sourceCode.length() && std::isdigit(_CurrentChar())) 
+        {
             value = value * 10 + (_CurrentChar() - '0');
             _NextChar();
         }
     }
     
     // 음수인 경우 부호 적용
-    if (isNegative) {
+    if (isNegative) 
+    {
         // 64비트 2의 보수로 변환
         value = static_cast<uint64_t>(-static_cast<int64_t>(value));
     }
@@ -214,13 +252,15 @@ bool Parser::_ParseNumber() {
     return true;
 }
 
-bool Parser::_ParseIdentifier() {
+bool Parser::_ParseIdentifier() 
+{
     size_t startPos = _currentPos;
     size_t startLine = _currentLine;
     size_t startColumn = _currentColumn;
     
     // 식별자 문자열 추출
-    while (_currentPos < _sourceCode.length()) {
+    while (_currentPos < _sourceCode.length()) 
+    {
         char c = _CurrentChar();
         
         if (!(std::isalnum(c) || c == '_' || c == '.')) {
@@ -233,7 +273,8 @@ bool Parser::_ParseIdentifier() {
     std::string identifier = _sourceCode.substr(startPos, _currentPos - startPos);
     
     // 레이블 확인 (식별자 뒤에 ':' 있는 경우)
-    if (_currentPos < _sourceCode.length() && _CurrentChar() == ':') {
+    if (_currentPos < _sourceCode.length() && _CurrentChar() == ':') 
+    {
         // 레이블 토큰 생성
         Token token;
         token.type = TokenType::LABEL;
@@ -247,7 +288,8 @@ bool Parser::_ParseIdentifier() {
     }
     
     // 지시자 확인 ('.' 으로 시작하는 경우)
-    if (!identifier.empty() && identifier[0] == '.') {
+    if (!identifier.empty() && identifier[0] == '.') 
+    {
         Token token;
         token.type = TokenType::DIRECTIVE;
         token.text = identifier;
@@ -268,25 +310,34 @@ bool Parser::_ParseIdentifier() {
     return true;
 }
 
-void Parser::_SetError(const std::string& message) {
+void Parser::_SetError(const std::string& message) 
+{
     _errorMessage = "Line " + std::to_string(_currentLine) + ", Column " + 
                     std::to_string(_currentColumn) + ": " + message;
     _hasError = true;
 }
 
-char Parser::_CurrentChar() const {
-    if (_currentPos < _sourceCode.length()) {
+char Parser::_CurrentChar() const 
+{
+    if (_currentPos < _sourceCode.length()) 
+    {
         return _sourceCode[_currentPos];
     }
+
     return '\0';
 }
 
-void Parser::_NextChar() {
-    if (_currentPos < _sourceCode.length()) {
-        if (_sourceCode[_currentPos] == '\n') {
+void Parser::_NextChar() 
+{
+    if (_currentPos < _sourceCode.length()) 
+    {
+        if (_sourceCode[_currentPos] == '\n') 
+        {
             _currentLine++;
             _currentColumn = 1;
-        } else {
+        } 
+        else 
+        {
             _currentColumn++;
         }
         _currentPos++;

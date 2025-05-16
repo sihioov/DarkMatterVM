@@ -91,7 +91,8 @@ public:
      * @return T 형변환된 반환 값
      */
     template<typename T>
-    T GetReturnValue() const {
+    T GetReturnValue() const 
+    {
         static_assert(sizeof(T) <= sizeof(uint64_t), "반환값이 uint64_t 이하여야 합니다.");
         
         return static_cast<T>(GetReturnValue());

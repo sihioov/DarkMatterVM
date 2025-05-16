@@ -30,9 +30,12 @@ void RunSimpleAdditionExample()
 	std::cout << "실행 결과: " << result << std::endl;
 	
 	// 예상 결과는 55 (42 + 13)
-	if (result == 55) {
+	if (result == 55) 
+	{
 		std::cout << "성공: 예상 결과와 일치합니다." << std::endl;
-	} else {
+	} 
+	else 
+	{
 		std::cout << "오류: 예상 결과(55)와 다릅니다." << std::endl;
 	}
 }
@@ -71,9 +74,12 @@ void RunMemoryExample()
 	std::cout << "메모리 예제 실행 결과: " << result << std::endl;
 	
 	// 예상 결과는 123
-	if (result == 123) {
+	if (result == 123) 
+	{
 		std::cout << "성공: 메모리 작업이 정상적으로 수행되었습니다." << std::endl;
-	} else {
+	} 
+	else 
+	{
 		std::cout << "오류: 예상 결과(123)와 다릅니다." << std::endl;
 	}
 }

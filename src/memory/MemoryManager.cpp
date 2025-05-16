@@ -207,12 +207,15 @@ void MemoryManager::PushUInt64(uint64_t value)
 
 uint64_t MemoryManager::PopUInt64() 
 {
-    _ValidateStack(_stackPointer);
+    if (_stackPointer >= GetSegment(MemorySegmentType::STACK).GetSize()) 
+    {
+        throw MemoryAccessException("스택 언더플로우: 스택에서 더 이상 값을 꺼낼 수 없습니다.");
+    }
     
     auto& stackSegment = GetSegment(MemorySegmentType::STACK);
     uint64_t value = stackSegment.ReadUInt64(_stackPointer);
     
-    // 포인터를 증가시켜 스택에서 제거
+    // 스택 포인터 이동 (8바이트)
     _stackPointer += sizeof(uint64_t);
     
     return value;
@@ -220,60 +223,56 @@ uint64_t MemoryManager::PopUInt64()
 
 size_t MemoryManager::AllocateHeap(size_t size) 
 {
-    // 힙 세그먼트 가져오기
-    auto& heapSegment = GetSegment(MemorySegmentType::HEAP);
-    
-    // 메모리 정렬 (8바이트 경계)
+    // 메모리 정렬을 위해 8바이트(64비트) 단위로 올림
     size = (size + 7) & ~7;
     
-    // 메모리 부족 체크
-    if (_nextHeapAddress + size > heapSegment.GetSize()) 
+    if (size == 0) 
+    {
+        throw MemoryAccessException("할당 크기는 0보다 커야 합니다.");
+    }
+    
+    auto& heapSegment = GetSegment(MemorySegmentType::HEAP);
+    
+    // 간단한 구현: 힙의 현재 위치에서 메모리 할당
+    // 프리리스트나 더 복잡한 메모리 관리는 구현하지 않음
+    size_t address = _nextHeapAddress;
+    
+    // 할당 가능한지 확인
+    if (address + size > heapSegment.GetSize()) 
     {
         throw MemoryAccessException("힙 메모리가 부족합니다.");
     }
     
-    // 할당할 주소
-    size_t address = _nextHeapAddress;
-    _nextHeapAddress += size;
+    // 할당 정보 저장 (현재 위치의 8바이트에 크기 저장)
+    heapSegment.WriteUInt64(address, size);
     
-    // 할당 정보 저장
-    _allocatedBlocks[address] = size;
+    // 다음 할당 위치 업데이트 (헤더(8바이트) + 실제 크기)
+    _nextHeapAddress = address + sizeof(uint64_t) + size;
     
-    // 할당된 메모리 초기화 (0으로)
-    for (size_t i = 0; i < size; ++i) 
-    {
-        heapSegment.WriteByte(address + i, 0);
-    }
-    
-    return address;
+    // 실제 메모리 시작 주소 반환 (헤더 다음부터)
+    return address + sizeof(uint64_t);
 }
 
 void MemoryManager::FreeHeap(size_t address) 
 {
-    // 힙 세그먼트 가져오기
     auto& heapSegment = GetSegment(MemorySegmentType::HEAP);
     
-    // 주소가 유효한지 확인
-    auto it = _allocatedBlocks.find(address);
-    if (it == _allocatedBlocks.end()) 
+    // 주소가 올바른지 확인
+    if (address < sizeof(uint64_t) || address >= heapSegment.GetSize()) 
     {
-        throw MemoryAccessException("유효하지 않은 힙 주소를 해제하려고 시도했습니다.");
+        throw MemoryAccessException("잘못된 힙 주소입니다.");
     }
     
-    // 블록 크기 확인
-    size_t size = it->second;
+    // 실제 블록 시작 주소 (헤더 포함)
+    size_t blockStart = address - sizeof(uint64_t);
     
-    // 메모리 영역 초기화 (보안상 이유로)
-    for (size_t i = 0; i < size; ++i) 
-    {
-        heapSegment.WriteByte(address + i, 0);
-    }
+    // 할당된 사이즈 읽기
+    uint64_t blockSize = heapSegment.ReadUInt64(blockStart);
     
-    // 할당 목록에서 제거
-    _allocatedBlocks.erase(it);
-    
-    // 참고: 이 구현은 메모리 공간을 재사용하지 않습니다 (단편화 처리 없음).
-    // 실제 프로덕션 환경에서는 더 복잡한 메모리 관리가 필요합니다.
+    // 간단한 구현: 실제로 메모리를 해제하진 않고, 할당 정보만 지움
+    // 현재 구현에서는 메모리 재사용이나 최적화가 없음
+    // 보다 복잡한 메모리 관리 시스템이 필요할 수 있음
+    heapSegment.WriteUInt64(blockStart, 0);
 }
 
 } // namespace Memory

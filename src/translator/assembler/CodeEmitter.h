@@ -8,14 +8,18 @@
 #include "Parser.h"
 #include "SymbolTable.h"
 
-namespace DarkMatterVM {
-namespace Translator {
-namespace Assembler {
+namespace DarkMatterVM 
+{
+namespace Translator 
+{
+namespace Assembler 
+{
 
 /**
  * @brief 코드 내 수정(fix-up) 항목
  */
-struct Fixup {
+struct Fixup 
+{
     size_t offset;           ///< 수정해야 할 위치
     std::string targetLabel; ///< 대상 레이블 이름
     uint8_t size;            ///< 수정 크기 (바이트)
@@ -27,7 +31,8 @@ struct Fixup {
  * 
  * 파싱된 어셈블리 코드를 바이트코드로 변환
  */
-class CodeEmitter {
+class CodeEmitter 
+{
 public:
     /**
      * @brief 생성자

@@ -5,14 +5,18 @@
 #include <memory>
 #include "../../../include/Opcodes.h"
 
-namespace DarkMatterVM {
-namespace Translator {
-namespace Assembler {
+namespace DarkMatterVM 
+{
+namespace Translator 
+{
+namespace Assembler 
+{
 
 /**
  * @brief 어셈블리 토큰 타입
  */
-enum class TokenType {
+enum class TokenType 
+{
     MNEMONIC,   ///< 명령어 니모닉
     NUMBER,     ///< 숫자 리터럴
     LABEL,      ///< 레이블 심볼
@@ -24,7 +28,8 @@ enum class TokenType {
 /**
  * @brief 어셈블리 토큰
  */
-struct Token {
+struct Token 
+{
     TokenType type;     ///< 토큰 타입
     std::string text;   ///< 토큰 텍스트
     uint64_t value;     ///< 숫자 값 (타입이 NUMBER인 경우)
@@ -37,7 +42,8 @@ struct Token {
  * 
  * 텍스트 기반 어셈블리 코드를 토큰으로 분석
  */
-class Parser {
+class Parser 
+{
 public:
     /**
      * @brief 생성자

@@ -69,7 +69,8 @@ bool Interpreter::Step()
         return false;
     }
     
-    try {
+    try 
+    {
         // 명령어 가져오기 (fetch)
         uint8_t opcode = _FetchByte();
         
@@ -87,13 +88,15 @@ bool Interpreter::Step()
         
         return true;
     }
-    catch (const Memory::MemoryAccessException& e) {
+    catch (const Memory::MemoryAccessException& e) 
+    {
         std::cerr << "메모리 접근 오류: " << e.what() << std::endl;
         _running = false;
 
         return false;
     }
-    catch (const std::exception& e) {
+    catch (const std::exception& e) 
+    {
         std::cerr << "VM 실행 오류: " << e.what() << std::endl;
         _running = false;
 
@@ -103,12 +106,12 @@ bool Interpreter::Step()
 
 void Interpreter::DumpState() const
 {
-    /*std::cout << "===== VM 상태 덤프 =====" << std::endl;
+    std::cout << "===== VM 상태 덤프 =====" << std::endl;
     std::cout << "IP: 0x" << std::hex << _ip << std::endl;
     std::cout << "실행 중: " << (_running ? "예" : "아니오") << std::endl;
     std::cout << "반환 값: 0x" << std::hex << _returnValue << " (" << std::dec << _returnValue << ")" << std::endl;
     std::cout << "스택 포인터: 0x" << std::hex << _memory->GetStackPointer() << std::endl;
-    std::cout << "=========================" << std::endl;*/
+    std::cout << "=========================" << std::endl;
 }
 
 void Interpreter::PushParameter(uint64_t value)
@@ -453,8 +456,7 @@ void Interpreter::_Handle_JZ()
     int16_t offset = _FetchInt16();
     
     // 조건이 0이면 점프
-    if (condition == 0) 
-    {
+    if (condition == 0) {
         _ip += offset;
     }
 }
@@ -468,8 +470,7 @@ void Interpreter::_Handle_JNZ()
     int16_t offset = _FetchInt16();
     
     // 조건이 0이 아니면 점프
-    if (condition != 0) 
-    {
+    if (condition != 0) {
         _ip += offset;
     }
 }
@@ -489,7 +490,7 @@ void Interpreter::_Handle_HALT()
     _running = false;
 }
 
-void Interpreter::_Handle_LOAD16() 
+void Interpreter::_Handle_LOAD16()
 {
     // 주소를 스택에서 가져옴
     uint64_t address = _memory->PopUInt64();
@@ -688,7 +689,8 @@ void Interpreter::_Handle_HOSTCALL()
     
     // 현재는 구현이 간단하므로 기본적인 호스트 함수만 지원
     // 실제 구현에서는 호스트 함수 테이블을 사용하여 확장 가능
-    switch (functionId) {
+    switch (functionId) 
+    {
         case 0: // 값 출력
         {
             uint64_t value = _memory->PopUInt64();

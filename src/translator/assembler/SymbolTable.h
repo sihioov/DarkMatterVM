@@ -4,14 +4,18 @@
 #include <unordered_map>
 #include <cstdint>
 
-namespace DarkMatterVM {
-namespace Translator {
-namespace Assembler {
+namespace DarkMatterVM 
+{
+namespace Translator 
+{
+namespace Assembler 
+{
 
 /**
  * @brief 심볼 타입
  */
-enum class SymbolType {
+enum class SymbolType 
+{
     LABEL,      ///< 코드 레이블
     CONSTANT,   ///< 상수 값
     VARIABLE    ///< 변수
@@ -20,7 +24,8 @@ enum class SymbolType {
 /**
  * @brief 심볼 정보
  */
-struct SymbolInfo {
+struct SymbolInfo 
+{
     SymbolType type;     ///< 심볼 타입
     size_t offset;       ///< 코드 내 오프셋
     uint64_t value;      ///< 값 (상수/변수인 경우)
@@ -32,7 +37,8 @@ struct SymbolInfo {
  * 
  * 어셈블리 과정에서 레이블과 심볼 관리
  */
-class SymbolTable {
+class SymbolTable 
+{
 public:
     /**
      * @brief 생성자
