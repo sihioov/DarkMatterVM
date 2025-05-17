@@ -1,6 +1,7 @@
 #include "CodeEmitter.h"
 #include <map>
 #include <algorithm>
+#include "../../common/Logger.h"
 
 namespace DarkMatterVM 
 {
@@ -63,25 +64,24 @@ static const std::map<std::string, Engine::Opcode> s_opcodeMap =
 };
 
 CodeEmitter::CodeEmitter(SymbolTable& symbolTable)
-    : _symbolTable(symbolTable), _currentTokenIndex(0), _tokens(nullptr), _hasError(false) 
+    : _symbolTable(symbolTable), _currentTokenIndex(0), _tokens(nullptr)
 {
-    Initialize();
 }
 
 void CodeEmitter::Initialize() 
 {
     _bytecode.clear();
     _fixups.clear();
-    _errorMessage.clear();
     _currentTokenIndex = 0;
-    _hasError = false;
+    _tokens = nullptr;
 }
 
 bool CodeEmitter::EmitCode(const std::vector<Token>& tokens) 
 {
     if (tokens.empty()) 
     {
-        return true;
+        _LogError("Empty token list");
+        return false;
     }
     
     _tokens = &tokens;
@@ -105,8 +105,7 @@ bool CodeEmitter::EmitCode(const std::vector<Token>& tokens)
                 // 레이블 처리: 현재 위치를 심볼 테이블에 기록
                 if (!_symbolTable.AddLabel(token.text, GetCurrentOffset())) 
                 {
-                    _SetError("Failed to add label: " + _symbolTable.GetErrorMessage(), &token);
-
+                    _LogError("Failed to add label: " + token.text, &token);
                     return false;
                 }
                 _NextToken();
@@ -119,7 +118,7 @@ bool CodeEmitter::EmitCode(const std::vector<Token>& tokens)
                 auto it = s_opcodeMap.find(token.text);
                 if (it == s_opcodeMap.end()) 
                 {
-                    _SetError("Unknown mnemonic: " + token.text, &token);
+                    _LogError("Unknown mnemonic: " + token.text, &token);
                     return false;
                 }
                 
@@ -154,8 +153,7 @@ bool CodeEmitter::EmitCode(const std::vector<Token>& tokens)
             
             default: 
             {
-                _SetError("Unexpected token type", &token);
-
+                _LogError("Unexpected token type", &token);
                 return false;
             }
         }
@@ -179,8 +177,7 @@ bool CodeEmitter::_ProcessInstruction(Engine::Opcode opcode)
     if (_currentTokenIndex >= _tokens->size() || 
         (_CurrentToken().type != TokenType::NUMBER && _CurrentToken().type != TokenType::LABEL)) 
     {
-        _SetError("Expected operand for instruction " + std::string(info.mnemonic));
-
+        _LogError("Expected operand for instruction " + std::string(info.mnemonic));
         return false;
     }
     
@@ -234,15 +231,13 @@ bool CodeEmitter::_ProcessInstruction(Engine::Opcode opcode)
             } 
             else 
             {
-                _SetError("Unsupported operand size for jump instruction", &operandToken);
-
+                _LogError("Unsupported operand size for jump instruction", &operandToken);
                 return false;
             }
         } 
         else 
         {
-            _SetError("Invalid operand type for jump instruction", &operandToken);
-
+            _LogError("Invalid operand type for jump instruction", &operandToken);
             return false;
         }
     } 
@@ -270,21 +265,18 @@ bool CodeEmitter::_ProcessInstruction(Engine::Opcode opcode)
                     break;
 
                 default:
-                    _SetError("Unsupported operand size", &operandToken);
-
+                    _LogError("Unsupported operand size", &operandToken);
                     return false;
             }
         } 
         else 
         {
-            _SetError("Invalid operand type for instruction", &operandToken);
-
+            _LogError("Invalid operand type for instruction", &operandToken);
             return false;
         }
     }
     
     _NextToken();
-
     return true;
 }
 
@@ -297,15 +289,13 @@ bool CodeEmitter::_ApplyFixups()
         
         if (!symbolInfo) 
         {
-            _SetError("Undefined label referenced: " + fixup.targetLabel);
-
+            _LogError("Undefined label referenced: " + fixup.targetLabel);
             return false;
         }
         
         if (!symbolInfo->isDefined) 
         {
-            _SetError("Forward reference to undefined label: " + fixup.targetLabel);
-
+            _LogError("Forward reference to undefined label: " + fixup.targetLabel);
             return false;
         }
         
@@ -355,8 +345,7 @@ bool CodeEmitter::_ApplyFixups()
                 break;
                 
             default:
-                _SetError("Unsupported fixup size: " + std::to_string(fixup.size));
-                
+                _LogError("Unsupported fixup size: " + std::to_string(fixup.size));
                 return false;
         }
     }
@@ -395,18 +384,22 @@ void CodeEmitter::_EmitUInt64(uint64_t value)
     _bytecode.push_back(static_cast<uint8_t>((value >> 56) & 0xFF));
 }
 
-void CodeEmitter::_SetError(const std::string& message, const Token* token) 
+void CodeEmitter::_LogError(const std::string& message, const Token* token)
 {
+    std::string errorMsg;
     if (token) 
     {
-        _errorMessage = "Line " + std::to_string(token->line) + ", Column " + 
-                        std::to_string(token->column) + ": " + message;
+        errorMsg = "Line " + std::to_string(token->line) + 
+                 ", Column " + std::to_string(token->column) + 
+                 ": " + message;
     } 
     else 
     {
-        _errorMessage = message;
+        errorMsg = message;
     }
-    _hasError = true;
+    
+    // 로거를 사용하여 오류 로깅
+    Logger::Error("CodeEmitter", errorMsg);
 }
 
 const Token& CodeEmitter::_CurrentToken() const 

@@ -17,8 +17,10 @@ enum class TokenType {
     NUMBER,     ///< 숫자 리터럴
     LABEL,      ///< 레이블 심볼
     DIRECTIVE,  ///< 어셈블러 지시자
+    STRING,     ///< 문자열
     EOL,        ///< 줄 끝
-    END         ///< 파일 끝
+    END,        ///< 파일 끝
+    UNKNOWN     ///< 알 수 없는 토큰
 };
 
 /**

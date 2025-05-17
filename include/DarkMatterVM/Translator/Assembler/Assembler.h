@@ -2,7 +2,7 @@
 
 #include <string>
 #include <vector>
-#include <memory>
+#include <cstdint>
 #include "Parser.h"
 #include "SymbolTable.h"
 #include "CodeEmitter.h"
@@ -14,8 +14,7 @@ namespace Assembler {
 /**
  * @brief 어셈블러 클래스
  * 
- * 어셈블리 코드를 받아 바이트코드로 변환하는 클래스
- * Parser, SymbolTable, CodeEmitter 컴포넌트를 조정
+ * 어셈블리 소스 코드를 바이트코드로 변환
  */
 class Assembler {
 public:
@@ -44,21 +43,11 @@ public:
      */
     const std::vector<uint8_t>& GetBytecode() const;
     
-    /**
-     * @brief 오류 메시지 조회
-     * 
-     * @return const std::string& 오류 메시지
-     */
-    const std::string& GetErrorMessage() const { return _errorMessage; }
-    
 private:
     // 컴포넌트
     Parser _parser;
     SymbolTable _symbolTable;
     CodeEmitter _codeEmitter;
-    
-    // 결과 및 상태
-    std::string _errorMessage;
 };
 
 } // namespace Assembler

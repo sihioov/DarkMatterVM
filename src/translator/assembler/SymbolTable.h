@@ -96,26 +96,16 @@ public:
      */
     size_t GetUndefinedCount() const;
     
-    /**
-     * @brief 오류 메시지 조회
-     * 
-     * @return const std::string& 마지막 오류 메시지
-     */
-    const std::string& GetErrorMessage() const { return _errorMessage; }
-    
 private:
     // 심볼 테이블
     std::unordered_map<std::string, SymbolInfo> _symbols;
     
-    // 오류 처리
-    std::string _errorMessage;
-    
     /**
-     * @brief 오류 메시지 설정
+     * @brief 오류 로깅
      * 
      * @param message 오류 메시지
      */
-    void _SetError(const std::string& message);
+    void _LogError(const std::string& message);
 };
 
 } // namespace Assembler

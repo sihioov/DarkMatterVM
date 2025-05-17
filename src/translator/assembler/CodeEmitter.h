@@ -73,13 +73,6 @@ public:
      */
     size_t GetCurrentOffset() const { return _bytecode.size(); }
     
-    /**
-     * @brief 오류 메시지 조회
-     * 
-     * @return const std::string& 마지막 오류 메시지
-     */
-    const std::string& GetErrorMessage() const { return _errorMessage; }
-    
 private:
     // 코드 생성 상태
     std::vector<uint8_t> _bytecode;
@@ -89,10 +82,6 @@ private:
     // 토큰 처리
     size_t _currentTokenIndex;
     const std::vector<Token>* _tokens;
-    
-    // 오류 처리
-    std::string _errorMessage;
-    bool _hasError;
     
     /**
      * @brief 바이트 추가
@@ -138,12 +127,12 @@ private:
     bool _ApplyFixups();
     
     /**
-     * @brief 오류 설정
+     * @brief 오류 로깅
      * 
      * @param message 오류 메시지
      * @param token 오류 발생 토큰 (선택적)
      */
-    void _SetError(const std::string& message, const Token* token = nullptr);
+    void _LogError(const std::string& message, const Token* token = nullptr);
     
     /**
      * @brief 현재 토큰 가져오기

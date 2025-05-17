@@ -5,6 +5,7 @@
 #include <filesystem>
 #include <algorithm>
 #include <zlib.h>
+#include "../common/Logger.h"
 
 namespace DarkMatterVM 
 {
@@ -72,7 +73,7 @@ bool Packer::AddBytecode(const std::vector<uint8_t>& bytecode, const std::string
 {
 	if (bytecode.empty()) 
 	{
-		std::cerr << "오류: 빈 바이트코드를 추가할 수 없습니다." << std::endl;
+		Logger::Error("Packer", "빈 바이트코드를 추가할 수 없습니다.");
 		return false;
 	}
 	
@@ -82,7 +83,7 @@ bool Packer::AddBytecode(const std::vector<uint8_t>& bytecode, const std::string
 	
 	if (it != _bytecodeModules.end()) 
 	{
-		std::cerr << "오류: 이미 '" << name << "' 모듈이 존재합니다." << std::endl;
+		Logger::Error("Packer", "이미 '" + name + "' 모듈이 존재합니다.");
 		return false;
 	}
 	
@@ -96,7 +97,7 @@ bool Packer::AddResource(const std::string& filePath, const std::string& resourc
 	// 파일 존재 여부 확인
 	if (!std::filesystem::exists(filePath)) 
 	{
-		std::cerr << "오류: 리소스 파일 '" << filePath << "'을(를) 찾을 수 없습니다." << std::endl;
+		Logger::Error("Packer", "리소스 파일 '" + filePath + "'를 찾을 수 없습니다.");
 		return false;
 	}
 	
@@ -106,7 +107,7 @@ bool Packer::AddResource(const std::string& filePath, const std::string& resourc
 	
 	if (it != _resources.end()) 
 	{
-		std::cerr << "오류: 이미 '" << resourceName << "' 리소스가 존재합니다." << std::endl;
+		Logger::Error("Packer", "이미 '" + resourceName + "' 리소스가 존재합니다.");
 		return false;
 	}
 	
@@ -114,7 +115,7 @@ bool Packer::AddResource(const std::string& filePath, const std::string& resourc
 	std::ifstream file(filePath, std::ios::binary);
 	if (!file) 
 	{
-		std::cerr << "오류: 리소스 파일 '" << filePath << "'을(를) 열 수 없습니다." << std::endl;
+		Logger::Error("Packer", "리소스 파일 '" + filePath + "'를 열 수 없습니다.");
 		return false;
 	}
 	
@@ -129,7 +130,7 @@ bool Packer::AddResource(const std::string& filePath, const std::string& resourc
 	
 	if (!file) 
 	{
-		std::cerr << "오류: 리소스 파일 '" << filePath << "' 읽기 실패." << std::endl;
+		Logger::Error("Packer", "리소스 파일 '" + filePath + "' 읽기 실패.");
 		return false;
 	}
 	
@@ -156,7 +157,7 @@ bool Packer::CreatePackage(const std::string& outputPath)
 	// 바이트코드가 비어있는지 확인
 	if (_bytecodeModules.empty()) 
 	{
-		std::cerr << "오류: 패키지에 바이트코드가 없습니다." << std::endl;
+		Logger::Error("Packer", "패키지에 바이트코드가 없습니다.");
 		return false;
 	}
 	
@@ -164,7 +165,7 @@ bool Packer::CreatePackage(const std::string& outputPath)
 	std::ofstream outFile(outputPath, std::ios::binary);
 	if (!outFile) 
 	{
-		std::cerr << "오류: 패키지 파일 '" << outputPath << "'을(를) 생성할 수 없습니다." << std::endl;
+		Logger::Error("Packer", "패키지 파일 '" + outputPath + "'를 생성할 수 없습니다.");
 		return false;
 	}
 	
@@ -329,14 +330,14 @@ bool Packer::CreatePackage(const std::string& outputPath)
 	
 	if (!outFile) 
 	{
-		std::cerr << "오류: 패키지 파일 쓰기 실패." << std::endl;
+		Logger::Error("Packer", "패키지 파일 쓰기 실패.");
 		return false;
 	}
 	
-	std::cout << "패키지가 성공적으로 생성되었습니다: " << outputPath << std::endl;
-	std::cout << "총 크기: " << packageData.size() << " 바이트" << std::endl;
-	std::cout << "바이트코드 모듈: " << _bytecodeModules.size() << "개" << std::endl;
-	std::cout << "리소스: " << _resources.size() << "개" << std::endl;
+	Logger::Info("Packer", "패키지가 성공적으로 생성되었습니다: " + outputPath);
+	Logger::Info("Packer", "총 크기: " + std::to_string(packageData.size()) + " 바이트");
+	Logger::Info("Packer", "바이트코드 모듈: " + std::to_string(_bytecodeModules.size()) + "개");
+	Logger::Info("Packer", "리소스: " + std::to_string(_resources.size()) + "개");
 	
 	return true;
 }
@@ -346,7 +347,7 @@ bool Packer::ValidatePackage(const std::string& packagePath)
 	// 파일 존재 여부 확인
 	if (!std::filesystem::exists(packagePath)) 
 	{
-		std::cerr << "오류: 패키지 파일 '" << packagePath << "'을(를) 찾을 수 없습니다." << std::endl;
+		Logger::Error("Packer", "패키지 파일 '" + packagePath + "'를 찾을 수 없습니다.");
 		return false;
 	}
 	
@@ -354,7 +355,7 @@ bool Packer::ValidatePackage(const std::string& packagePath)
 	std::ifstream file(packagePath, std::ios::binary);
 	if (!file) 
 	{
-		std::cerr << "오류: 패키지 파일 '" << packagePath << "'을(를) 열 수 없습니다." << std::endl;
+		Logger::Error("Packer", "패키지 파일 '" + packagePath + "'를 열 수 없습니다.");
 		return false;
 	}
 	
@@ -366,7 +367,7 @@ bool Packer::ValidatePackage(const std::string& packagePath)
 	// 최소 헤더 크기 확인
 	if (fileSize < sizeof(PackageHeader)) 
 	{
-		std::cerr << "오류: 유효하지 않은 패키지 파일 형식." << std::endl;
+		Logger::Error("Packer", "유효하지 않은 패키지 파일 형식.");
 		return false;
 	}
 	
@@ -377,22 +378,22 @@ bool Packer::ValidatePackage(const std::string& packagePath)
 	// 매직 넘버 확인
 	if (header.magic != PACKAGE_MAGIC) 
 	{
-		std::cerr << "오류: 유효하지 않은 패키지 파일 (매직 넘버 불일치)." << std::endl;
+		Logger::Error("Packer", "유효하지 않은 패키지 파일 (매직 넘버 불일치).");
 		return false;
 	}
 	
 	// 버전 확인
 	if (header.version != 1) 
 	{
-		std::cerr << "오류: 지원되지 않는 패키지 버전: " << static_cast<int>(header.version) << std::endl;
+		Logger::Error("Packer", "지원되지 않는 패키지 버전: " + std::to_string(static_cast<int>(header.version)));
 		return false;
 	}
 	
 	// 전체 크기 확인
 	if (header.totalSize != fileSize) 
 	{
-		std::cerr << "경고: 패키지 크기 불일치. 예상: " << header.totalSize 
-				  << ", 실제: " << fileSize << std::endl;
+		Logger::Warning("Packer", "패키지 크기 불일치. 예상: " + std::to_string(header.totalSize) + 
+                      ", 실제: " + std::to_string(fileSize));
 	}
 	
 	// 체크섬 확인
@@ -416,13 +417,13 @@ bool Packer::ValidatePackage(const std::string& packagePath)
 	// 체크섬 비교
 	if (calculatedChecksum != storedChecksum) 
 	{
-		std::cerr << "오류: 체크섬 불일치. 패키지가 손상되었을 수 있습니다." << std::endl;
+		Logger::Error("Packer", "체크섬 불일치. 패키지가 손상되었을 수 있습니다.");
 		return false;
 	}
 	
-	std::cout << "패키지 유효성 검사 성공: " << packagePath << std::endl;
-	std::cout << "바이트코드 모듈: " << header.bytecodeModuleCount << "개" << std::endl;
-	std::cout << "리소스: " << header.resourceCount << "개" << std::endl;
+	Logger::Info("Packer", "패키지 유효성 검사 성공: " + packagePath);
+	Logger::Info("Packer", "바이트코드 모듈: " + std::to_string(header.bytecodeModuleCount) + "개");
+	Logger::Info("Packer", "리소스: " + std::to_string(header.resourceCount) + "개");
 	
 	return true;
 }
@@ -445,7 +446,7 @@ std::vector<uint8_t> Packer::CompressData(const std::vector<uint8_t>& input)
 	
 	if (result != Z_OK) 
 	{
-		std::cerr << "압축 오류: " << result << std::endl;
+		Logger::Error("Packer", "압축 오류: " + std::to_string(result));
 		return input; // 압축 실패 시 원본 반환
 	}
 	

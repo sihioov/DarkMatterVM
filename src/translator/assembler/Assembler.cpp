@@ -1,4 +1,5 @@
 #include "Assembler.h"
+#include "../../common/Logger.h"
 
 namespace DarkMatterVM 
 {
@@ -17,29 +18,25 @@ bool Assembler::Assemble(const std::string& sourceCode)
     // 컴포넌트 초기화
     _symbolTable.Clear();
     _codeEmitter.Initialize();
-    _errorMessage.clear();
     
     // 1단계: 소스 코드 파싱
     if (!_parser.Parse(sourceCode)) 
     {
-        _errorMessage = "Parsing error: " + _parser.GetErrorMessage();
-
+        Logger::Error("Assembler", "Parsing failed");
         return false;
     }
     
     // 2단계: 바이트코드 생성
     if (!_codeEmitter.EmitCode(_parser.GetTokens())) 
     {
-        _errorMessage = "Code generation error: " + _codeEmitter.GetErrorMessage();
-
+        Logger::Error("Assembler", "Code generation failed");
         return false;
     }
     
     // 미정의된 심볼 확인
     if (_symbolTable.GetUndefinedCount() > 0) 
     {
-        _errorMessage = "Undefined symbols remain";
-        
+        Logger::Error("Assembler", "Undefined symbols remain");
         return false;
     }
     

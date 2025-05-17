@@ -1,4 +1,5 @@
 #include "SymbolTable.h"
+#include "../../common/Logger.h"
 
 namespace DarkMatterVM 
 {
@@ -15,7 +16,6 @@ SymbolTable::SymbolTable()
 void SymbolTable::Clear() 
 {
     _symbols.clear();
-    _errorMessage.clear();
 }
 
 bool SymbolTable::AddLabel(const std::string& name, size_t offset) 
@@ -27,7 +27,7 @@ bool SymbolTable::AddLabel(const std::string& name, size_t offset)
         // 이미 정의된 레이블인 경우 오류
         if (it->second.isDefined) 
         {
-            _SetError("Label '" + name + "' is already defined");
+            _LogError("Label '" + name + "' is already defined");
 
             return false;
         }
@@ -56,7 +56,7 @@ bool SymbolTable::AddConstant(const std::string& name, uint64_t value)
     // 이미 존재하는 심볼인지 확인
     if (_symbols.find(name) != _symbols.end()) 
     {
-        _SetError("Symbol '" + name + "' 이미 정의됨");
+        _LogError("Symbol '" + name + "' 이미 정의됨");
 
         return false;
     }
@@ -103,9 +103,10 @@ size_t SymbolTable::GetUndefinedCount() const
     return count;
 }
 
-void SymbolTable::_SetError(const std::string& message) 
+void SymbolTable::_LogError(const std::string& message)
 {
-    _errorMessage = message;
+    // 로거를 사용하여 오류 로깅
+    Logger::Error("SymbolTable", message);
 }
 
 } // namespace Assembler
