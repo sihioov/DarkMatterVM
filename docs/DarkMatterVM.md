@@ -182,7 +182,26 @@ DarkMatterVM/
 ├── src/
 │   ├── translator/
 │   │   ├── ast/
-│   │   │   └── ASTNode.cpp
+│   │   │   ├── base/
+│   │   │   │   ├── ASTNode.h
+│   │   │   │   ├── ASTNode.cpp
+│   │   │   │   └── OperatorTypes.h
+│   │   │   ├── nodes/
+│   │   │   │   ├── LiteralNodes.h
+│   │   │   │   ├── LiteralNodes.cpp
+│   │   │   │   ├── VariableNodes.h
+│   │   │   │   ├── VariableNodes.cpp
+│   │   │   │   ├── OperatorNodes.h
+│   │   │   │   ├── OperatorNodes.cpp
+│   │   │   │   ├── ContainerNodes.h
+│   │   │   │   └── ContainerNodes.cpp
+│   │   │   ├── visitor/
+│   │   │   │   ├── ASTVisitor.h
+│   │   │   │   ├── BytecodeGeneratorVisitor.h
+│   │   │   │   ├── BytecodeGeneratorVisitor.cpp
+│   │   │   │   └── README.md
+│   │   │   ├── ASTNodeFactory.h
+│   │   │   └── ASTNodeFactory.cpp
 │   │   ├── codegen/
 │   │   │   └── BytecodeBuilder.cpp
 │   │   ├── optimizer/
