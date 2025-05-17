@@ -23,6 +23,7 @@ bool Assembler::Assemble(const std::string& sourceCode)
     if (!_parser.Parse(sourceCode)) 
     {
         _errorMessage = "Parsing error: " + _parser.GetErrorMessage();
+
         return false;
     }
     
@@ -30,6 +31,7 @@ bool Assembler::Assemble(const std::string& sourceCode)
     if (!_codeEmitter.EmitCode(_parser.GetTokens())) 
     {
         _errorMessage = "Code generation error: " + _codeEmitter.GetErrorMessage();
+
         return false;
     }
     
@@ -37,6 +39,7 @@ bool Assembler::Assemble(const std::string& sourceCode)
     if (_symbolTable.GetUndefinedCount() > 0) 
     {
         _errorMessage = "Undefined symbols remain";
+        
         return false;
     }
     

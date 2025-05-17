@@ -106,6 +106,7 @@ bool CodeEmitter::EmitCode(const std::vector<Token>& tokens)
                 if (!_symbolTable.AddLabel(token.text, GetCurrentOffset())) 
                 {
                     _SetError("Failed to add label: " + _symbolTable.GetErrorMessage(), &token);
+
                     return false;
                 }
                 _NextToken();
@@ -154,6 +155,7 @@ bool CodeEmitter::EmitCode(const std::vector<Token>& tokens)
             default: 
             {
                 _SetError("Unexpected token type", &token);
+
                 return false;
             }
         }
@@ -178,6 +180,7 @@ bool CodeEmitter::_ProcessInstruction(Engine::Opcode opcode)
         (_CurrentToken().type != TokenType::NUMBER && _CurrentToken().type != TokenType::LABEL)) 
     {
         _SetError("Expected operand for instruction " + std::string(info.mnemonic));
+
         return false;
     }
     
@@ -232,12 +235,14 @@ bool CodeEmitter::_ProcessInstruction(Engine::Opcode opcode)
             else 
             {
                 _SetError("Unsupported operand size for jump instruction", &operandToken);
+
                 return false;
             }
         } 
         else 
         {
             _SetError("Invalid operand type for jump instruction", &operandToken);
+
             return false;
         }
     } 
@@ -251,28 +256,35 @@ bool CodeEmitter::_ProcessInstruction(Engine::Opcode opcode)
                 case 1:
                     _EmitByte(static_cast<uint8_t>(operandToken.value));
                     break;
+
                 case 2:
                     _EmitUInt16(static_cast<uint16_t>(operandToken.value));
                     break;
+
                 case 4:
                     _EmitUInt32(static_cast<uint32_t>(operandToken.value));
                     break;
+
                 case 8:
                     _EmitUInt64(operandToken.value);
                     break;
+
                 default:
                     _SetError("Unsupported operand size", &operandToken);
+
                     return false;
             }
         } 
         else 
         {
             _SetError("Invalid operand type for instruction", &operandToken);
+
             return false;
         }
     }
     
     _NextToken();
+
     return true;
 }
 
@@ -286,12 +298,14 @@ bool CodeEmitter::_ApplyFixups()
         if (!symbolInfo) 
         {
             _SetError("Undefined label referenced: " + fixup.targetLabel);
+
             return false;
         }
         
         if (!symbolInfo->isDefined) 
         {
             _SetError("Forward reference to undefined label: " + fixup.targetLabel);
+
             return false;
         }
         
@@ -342,6 +356,7 @@ bool CodeEmitter::_ApplyFixups()
                 
             default:
                 _SetError("Unsupported fixup size: " + std::to_string(fixup.size));
+                
                 return false;
         }
     }

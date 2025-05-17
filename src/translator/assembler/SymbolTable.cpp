@@ -28,12 +28,14 @@ bool SymbolTable::AddLabel(const std::string& name, size_t offset)
         if (it->second.isDefined) 
         {
             _SetError("Label '" + name + "' is already defined");
+
             return false;
         }
         
         // 정의되지 않은 레이블을 이제 정의하는 경우
         it->second.offset = offset;
         it->second.isDefined = true;
+
         return true;
     }
     
@@ -45,6 +47,7 @@ bool SymbolTable::AddLabel(const std::string& name, size_t offset)
     info.isDefined = true;
     
     _symbols[name] = info;
+
     return true;
 }
 
@@ -53,7 +56,8 @@ bool SymbolTable::AddConstant(const std::string& name, uint64_t value)
     // 이미 존재하는 심볼인지 확인
     if (_symbols.find(name) != _symbols.end()) 
     {
-        _SetError("Symbol '" + name + "' is already defined");
+        _SetError("Symbol '" + name + "' 이미 정의됨");
+
         return false;
     }
     
@@ -65,6 +69,7 @@ bool SymbolTable::AddConstant(const std::string& name, uint64_t value)
     info.isDefined = true;
     
     _symbols[name] = info;
+
     return true;
 }
 
@@ -75,6 +80,7 @@ const SymbolInfo* SymbolTable::GetSymbol(const std::string& name) const
     {
         return &(it->second);
     }
+
     return nullptr;
 }
 
@@ -93,6 +99,7 @@ size_t SymbolTable::GetUndefinedCount() const
             count++;
         }
     }
+
     return count;
 }
 

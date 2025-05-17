@@ -86,6 +86,7 @@ bool Parser::Parse(const std::string& sourceCode)
         
         // 지원하지 않는 문자
         _SetError("Unexpected character: " + std::string(1, c));
+
         return false;
     }
     
@@ -108,6 +109,7 @@ bool Parser::_ParseNextToken()
     if (std::isspace(c)) 
     {
         _SkipWhitespace();
+
         return true;
     }
     
@@ -115,6 +117,7 @@ bool Parser::_ParseNextToken()
     if (c == ';') 
     {
         _SkipComment();
+
         return true;
     }
     
@@ -142,11 +145,13 @@ bool Parser::_ParseNextToken()
         _tokens.push_back(token);
         
         _NextChar();
+
         return true;
     }
     
     // 지원하지 않는 문자
     _SetError("Unexpected character: " + std::string(1, c));
+
     return false;
 }
 
@@ -284,6 +289,7 @@ bool Parser::_ParseIdentifier()
         _tokens.push_back(token);
         
         _NextChar(); // ':' 건너뛰기
+
         return true;
     }
     
@@ -296,6 +302,7 @@ bool Parser::_ParseIdentifier()
         token.line = startLine;
         token.column = startColumn;
         _tokens.push_back(token);
+        
         return true;
     }
     
