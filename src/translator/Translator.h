@@ -78,7 +78,7 @@ public:
      * 
      * @return const std::vector<uint8_t>& 바이트코드
      */
-    const std::vector<uint8_t>& GetBytecode() const;
+    const std::vector<uint8_t>& GetBytecode() const { return _bytecode; }
     
     /**
      * @brief 마지막 오류 메시지 가져오기

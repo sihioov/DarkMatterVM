@@ -82,7 +82,7 @@ public:
      * 
      * @return uint64_t 반환 값
      */
-    uint64_t GetReturnValue() const;
+    uint64_t GetReturnValue() const { return _returnValue; }
     
     /**
      * @brief 실행 결과 값 템플릿 버전

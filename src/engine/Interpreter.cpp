@@ -119,11 +119,6 @@ void Interpreter::PushParameter(uint64_t value)
     _memory->PushUInt64(value);
 }
 
-uint64_t Interpreter::GetReturnValue() const
-{
-    return _returnValue;
-}
-
 uint8_t Interpreter::_FetchByte()
 {
     // 현재 IP 위치에서 바이트 읽기

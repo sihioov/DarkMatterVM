@@ -97,11 +97,6 @@ TranslationResult Translator::TranslateFromAssembly(const std::string& sourceCod
     return TranslationResult::Success;
 }
 
-const std::vector<uint8_t>& Translator::GetBytecode() const
-{
-    return _bytecode;
-}
-
 const std::string& Translator::GetLastError() const
 {
     return _lastError;

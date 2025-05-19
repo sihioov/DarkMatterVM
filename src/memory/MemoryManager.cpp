@@ -1,4 +1,6 @@
 #include "MemoryManager.h"
+#include "StackMemory.h"
+#include "HeapMemory.h"
 #include <cstring>
 #include <algorithm>
 #include <stdexcept>
@@ -12,128 +14,155 @@ namespace Memory
 /// MemorySegment 구현
 
 MemorySegment::MemorySegment(MemorySegmentType type, size_t size, uint8_t accessFlags)
-    : type(type), accessFlags(accessFlags) 
+    : _type(type), _size(size), _accessFlags(accessFlags) 
 {
-    memory.resize(size, 0);  // 모든 메모리를 0으로 초기화
+    // OS 힙에 메모리 할당
+    _memory = new uint8_t[size]();  // 0으로 초기화
 }
 
-void MemorySegment::_ValidateAccess(size_t offset, size_t size, MemoryAccessFlags flag) const 
+MemorySegment::~MemorySegment()
 {
-    // 접근 권한 검사
-    if (!HasAccess(flag)) 
-    {
-        throw MemoryAccessException("메모리 접근 권한이 없습니다.");
-    }
-    
-    // 경계 검사
-    if (offset + size > memory.size()) 
-    {
-        throw MemoryAccessException("메모리 경계를 벗어난 접근입니다.");
-    }
+    // OS 힙에 할당된 메모리 해제
+    delete[] _memory;
 }
 
 void MemorySegment::Read(size_t offset, size_t size, void* buffer) const 
 {
     _ValidateAccess(offset, size, MemoryAccessFlags::READ);
-
-    std::memcpy(buffer, memory.data() + offset, size);
+    std::memcpy(buffer, _memory + offset, size);
 }
 
 void MemorySegment::Write(size_t offset, size_t size, const void* data) 
 {
     _ValidateAccess(offset, size, MemoryAccessFlags::WRITE);
-
-    std::memcpy(memory.data() + offset, data, size);
+    std::memcpy(_memory + offset, data, size);
 }
 
 uint8_t MemorySegment::ReadByte(size_t offset) const 
 {
-    uint8_t value;
-    Read(offset, sizeof(value), &value);
-    
-    return value;
+    _ValidateAccess(offset, 1, MemoryAccessFlags::READ);
+    return _memory[offset];
 }
 
 uint16_t MemorySegment::ReadUInt16(size_t offset) const 
 {
-    uint16_t value;
-    Read(offset, sizeof(value), &value);
-    
-    return value;
+    _ValidateAccess(offset, 2, MemoryAccessFlags::READ);
+    return static_cast<uint16_t>(_memory[offset]) | 
+           (static_cast<uint16_t>(_memory[offset + 1]) << 8);
 }
 
 uint32_t MemorySegment::ReadUInt32(size_t offset) const 
 {
-    uint32_t value;
-    Read(offset, sizeof(value), &value);
-    
-    return value;
+    _ValidateAccess(offset, 4, MemoryAccessFlags::READ);
+    return static_cast<uint32_t>(_memory[offset]) | 
+           (static_cast<uint32_t>(_memory[offset + 1]) << 8) |
+           (static_cast<uint32_t>(_memory[offset + 2]) << 16) |
+           (static_cast<uint32_t>(_memory[offset + 3]) << 24);
 }
 
 uint64_t MemorySegment::ReadUInt64(size_t offset) const 
 {
-    uint64_t value;
-    Read(offset, sizeof(value), &value);
-    
-    return value;
+    _ValidateAccess(offset, 8, MemoryAccessFlags::READ);
+    return static_cast<uint64_t>(_memory[offset]) | 
+           (static_cast<uint64_t>(_memory[offset + 1]) << 8) |
+           (static_cast<uint64_t>(_memory[offset + 2]) << 16) |
+           (static_cast<uint64_t>(_memory[offset + 3]) << 24) |
+           (static_cast<uint64_t>(_memory[offset + 4]) << 32) |
+           (static_cast<uint64_t>(_memory[offset + 5]) << 40) |
+           (static_cast<uint64_t>(_memory[offset + 6]) << 48) |
+           (static_cast<uint64_t>(_memory[offset + 7]) << 56);
 }
 
 void MemorySegment::WriteByte(size_t offset, uint8_t value) 
 {
-    Write(offset, sizeof(value), &value);
+    _ValidateAccess(offset, 1, MemoryAccessFlags::WRITE);
+    _memory[offset] = value;
 }
 
 void MemorySegment::WriteUInt16(size_t offset, uint16_t value) 
 {
-    Write(offset, sizeof(value), &value);
+    _ValidateAccess(offset, 2, MemoryAccessFlags::WRITE);
+    _memory[offset] = static_cast<uint8_t>(value);
+    _memory[offset + 1] = static_cast<uint8_t>(value >> 8);
 }
 
 void MemorySegment::WriteUInt32(size_t offset, uint32_t value) 
 {
-    Write(offset, sizeof(value), &value);
+    _ValidateAccess(offset, 4, MemoryAccessFlags::WRITE);
+    _memory[offset] = static_cast<uint8_t>(value);
+    _memory[offset + 1] = static_cast<uint8_t>(value >> 8);
+    _memory[offset + 2] = static_cast<uint8_t>(value >> 16);
+    _memory[offset + 3] = static_cast<uint8_t>(value >> 24);
 }
 
 void MemorySegment::WriteUInt64(size_t offset, uint64_t value) 
 {
-    Write(offset, sizeof(value), &value);
+    _ValidateAccess(offset, 8, MemoryAccessFlags::WRITE);
+    _memory[offset] = static_cast<uint8_t>(value);
+    _memory[offset + 1] = static_cast<uint8_t>(value >> 8);
+    _memory[offset + 2] = static_cast<uint8_t>(value >> 16);
+    _memory[offset + 3] = static_cast<uint8_t>(value >> 24);
+    _memory[offset + 4] = static_cast<uint8_t>(value >> 32);
+    _memory[offset + 5] = static_cast<uint8_t>(value >> 40);
+    _memory[offset + 6] = static_cast<uint8_t>(value >> 48);
+    _memory[offset + 7] = static_cast<uint8_t>(value >> 56);
+}
+
+void MemorySegment::_ValidateAccess(size_t offset, size_t size, MemoryAccessFlags flag) const 
+{
+    if (!HasAccess(flag)) 
+    {
+        throw MemoryAccessException("Memory access violation: no permission");
+    }
+    
+    if (offset + size > _size) 
+    {
+        throw MemoryAccessException("Memory access violation: out of bounds");
+    }
 }
 
 /// MemoryManager 구현
-MemoryManager::MemoryManager(size_t codeSize, size_t stackSize, size_t heapSize) 
+MemoryManager::MemoryManager(size_t codeSize, size_t stackSize, size_t heapSize)
 {
-    // 코드 세그먼트 생성 (읽기, 실행 권한)
+    // 코드 세그먼트 생성 (읽기+실행)
     _segments.push_back(std::make_unique<MemorySegment>(
-        MemorySegmentType::CODE,
-        codeSize,
-        static_cast<uint8_t>(MemoryAccessFlags::READ) | static_cast<uint8_t>(MemoryAccessFlags::EXECUTE)
+        MemorySegmentType::CODE, 
+        codeSize, 
+        static_cast<uint8_t>(MemoryAccessFlags::READ) | 
+        static_cast<uint8_t>(MemoryAccessFlags::EXECUTE)
     ));
     
-    // 스택 세그먼트 생성 (읽기, 쓰기 권한)
+    // 스택 세그먼트 생성 (읽기+쓰기)
     _segments.push_back(std::make_unique<MemorySegment>(
-        MemorySegmentType::STACK,
-        stackSize,
-        static_cast<uint8_t>(MemoryAccessFlags::READ) | static_cast<uint8_t>(MemoryAccessFlags::WRITE)
+        MemorySegmentType::STACK, 
+        stackSize, 
+        static_cast<uint8_t>(MemoryAccessFlags::READ) | 
+        static_cast<uint8_t>(MemoryAccessFlags::WRITE)
     ));
     
-    // 힙 세그먼트 생성 (읽기, 쓰기 권한)
+    // 힙 세그먼트 생성 (읽기+쓰기)
     _segments.push_back(std::make_unique<MemorySegment>(
-        MemorySegmentType::HEAP,
-        heapSize,
-        static_cast<uint8_t>(MemoryAccessFlags::READ) | static_cast<uint8_t>(MemoryAccessFlags::WRITE)
+        MemorySegmentType::HEAP, 
+        heapSize, 
+        static_cast<uint8_t>(MemoryAccessFlags::READ) | 
+        static_cast<uint8_t>(MemoryAccessFlags::WRITE)
     ));
     
-    // 상수 세그먼트 생성 (읽기 권한만)
+    // 상수 세그먼트 생성 (읽기 전용)
     _segments.push_back(std::make_unique<MemorySegment>(
-        MemorySegmentType::CONSTANT,
-        4096,  // 4KB 크기의 상수 영역
+        MemorySegmentType::CONSTANT, 
+        1024,  // 1KB
         static_cast<uint8_t>(MemoryAccessFlags::READ)
     ));
     
-    // 스택 포인터 초기화 (스택의 끝에서 시작해서 아래로 자람)
-    _stackPointer = stackSize;
-    // 힙 메모리 관리 변수 초기화
-    _nextHeapAddress = 0;
+    // 스택 메모리 생성
+    _stackMemory = std::make_unique<StackMemory>(GetSegment(MemorySegmentType::STACK));
+    
+    // 힙 메모리 생성
+    _heapMemory = std::make_unique<HeapMemory>(GetSegment(MemorySegmentType::HEAP));
 }
+
+MemoryManager::~MemoryManager() = default;
 
 const MemorySegment& MemoryManager::GetSegment(MemorySegmentType type) const 
 {
@@ -144,8 +173,8 @@ const MemorySegment& MemoryManager::GetSegment(MemorySegmentType type) const
             return *segment;
         }
     }
-
-    throw MemoryAccessException("존재하지 않는 메모리 세그먼트입니다.");
+    
+    throw std::runtime_error("MemoryManager: segment not found");
 }
 
 MemorySegment& MemoryManager::GetSegment(MemorySegmentType type) 
@@ -157,8 +186,8 @@ MemorySegment& MemoryManager::GetSegment(MemorySegmentType type)
             return *segment;
         }
     }
-
-    throw MemoryAccessException("존재하지 않는 메모리 세그먼트입니다.");
+    
+    throw std::runtime_error("MemoryManager: segment not found");
 }
 
 void MemoryManager::InitializeCode(const uint8_t* code, size_t size) 
@@ -166,113 +195,110 @@ void MemoryManager::InitializeCode(const uint8_t* code, size_t size)
     auto& codeSegment = GetSegment(MemorySegmentType::CODE);
     if (size > codeSegment.GetSize()) 
     {
-        throw MemoryAccessException("코드 세그먼트 크기가 부족합니다.");
+        throw std::runtime_error("MemoryManager: code size exceeds code segment");
     }
     
-    for (size_t i = 0; i < size; ++i) 
-    {
-        codeSegment.WriteByte(i, code[i]);
-    }
+    codeSegment.Write(0, size, code);
 }
 
-void MemoryManager::SetStackPointer(size_t stackPointer) 
-{
-    auto& stackSegment = GetSegment(MemorySegmentType::STACK);
-    if (stackPointer > stackSegment.GetSize()) 
-    {
-        throw MemoryAccessException("유효하지 않은 스택 포인터 값입니다.");
-    }
+// 스택 관련 메서드 구현
 
-    _stackPointer = stackPointer;
+void MemoryManager::SetStackPointer(size_t stackPointer)
+{
+    _stackMemory->SetStackPointer(stackPointer);
 }
 
-void MemoryManager::_ValidateStack(size_t offset) const 
+size_t MemoryManager::GetStackPointer() const
 {
-    auto& stackSegment = GetSegment(MemorySegmentType::STACK);
-    if (offset >= stackSegment.GetSize()) 
-    {
-        throw MemoryAccessException("스택 오버플로우: 스택 포인터가 경계를 벗어났습니다.");
-    }
+    return _stackMemory->GetStackPointer();
 }
 
-void MemoryManager::PushUInt64(uint64_t value) 
+void MemoryManager::PushStack(uint64_t value)
 {
-    // 스택은 위에서 아래로 자라므로, 포인터를 감소시킴
-    _stackPointer -= sizeof(uint64_t);
-    _ValidateStack(_stackPointer);
-    
-    auto& stackSegment = GetSegment(MemorySegmentType::STACK);
-    stackSegment.WriteUInt64(_stackPointer, value);
+    _stackMemory->PushStack(value);
 }
 
-uint64_t MemoryManager::PopUInt64() 
+uint64_t MemoryManager::PopStack()
 {
-    if (_stackPointer >= GetSegment(MemorySegmentType::STACK).GetSize()) 
-    {
-        throw MemoryAccessException("스택 언더플로우: 스택에서 더 이상 값을 꺼낼 수 없습니다.");
-    }
-    
-    auto& stackSegment = GetSegment(MemorySegmentType::STACK);
-    uint64_t value = stackSegment.ReadUInt64(_stackPointer);
-    
-    // 스택 포인터 이동 (8바이트)
-    _stackPointer += sizeof(uint64_t);
-    
-    return value;
+    return _stackMemory->PopStack();
 }
 
-size_t MemoryManager::AllocateHeap(size_t size) 
+uint64_t MemoryManager::PeekStack() const
 {
-    // 메모리 정렬을 위해 8바이트(64비트) 단위로 올림
-    size = (size + 7) & ~7;
-    
-    if (size == 0) 
-    {
-        throw MemoryAccessException("할당 크기는 0보다 커야 합니다.");
-    }
-    
-    auto& heapSegment = GetSegment(MemorySegmentType::HEAP);
-    
-    // 간단한 구현: 힙의 현재 위치에서 메모리 할당
-    // 프리리스트나 더 복잡한 메모리 관리는 구현하지 않음
-    size_t address = _nextHeapAddress;
-    
-    // 할당 가능한지 확인
-    if (address + size > heapSegment.GetSize()) 
-    {
-        throw MemoryAccessException("힙 메모리가 부족합니다.");
-    }
-    
-    // 할당 정보 저장 (현재 위치의 8바이트에 크기 저장)
-    heapSegment.WriteUInt64(address, size);
-    
-    // 다음 할당 위치 업데이트 (헤더(8바이트) + 실제 크기)
-    _nextHeapAddress = address + sizeof(uint64_t) + size;
-    
-    // 실제 메모리 시작 주소 반환 (헤더 다음부터)
-    return address + sizeof(uint64_t);
+    return _stackMemory->PeekStack();
 }
 
-void MemoryManager::FreeHeap(size_t address) 
+uint64_t MemoryManager::GetStackValue(size_t offset) const
 {
-    auto& heapSegment = GetSegment(MemorySegmentType::HEAP);
+    return _stackMemory->GetStackValue(offset);
+}
+
+void MemoryManager::PushStackFrame(size_t basePointer, size_t returnAddress)
+{
+    _stackMemory->PushStackFrame(basePointer, returnAddress);
+}
+
+void MemoryManager::PopStackFrame(size_t& basePointer, size_t& returnAddress)
+{
+    _stackMemory->PopStackFrame(basePointer, returnAddress);
+}
+
+// 힙 관련 메서드 구현
+
+size_t MemoryManager::AllocateHeap(size_t size)
+{
+    return _heapMemory->AllocateHeap(size);
+}
+
+void MemoryManager::FreeHeap(size_t address)
+{
+    _heapMemory->FreeHeap(address);
+}
+
+void MemoryManager::ReadHeap(size_t address, void* buffer, size_t size)
+{
+    _heapMemory->ReadHeap(address, buffer, size);
+}
+
+void MemoryManager::WriteHeap(size_t address, const void* data, size_t size)
+{
+    _heapMemory->WriteHeap(address, data, size);
+}
+
+uint8_t MemoryManager::ReadByte(size_t address) const 
+{
+    auto [segmentType, offset] = _ResolveAddress(address);
+    return GetSegment(segmentType).ReadByte(offset);
+}
+
+// 주소 해석
+std::pair<MemorySegmentType, size_t> MemoryManager::_ResolveAddress(size_t address) const 
+{
+    // 주소 범위에 따라 세그먼트 유형과 오프셋 결정
+    // 이 예제에서는 단순 구현 (실제 구현에서는 더 복잡할 수 있음)
     
-    // 주소가 올바른지 확인
-    if (address < sizeof(uint64_t) || address >= heapSegment.GetSize()) 
+    // 코드 영역: 0x00000000 ~ 0x0000FFFF
+    if (address < 0x10000) 
     {
-        throw MemoryAccessException("잘못된 힙 주소입니다.");
+        return {MemorySegmentType::CODE, address};
+    }
+    // 상수 영역: 0x00010000 ~ 0x000103FF
+    else if (address < 0x10400) 
+    {
+        return {MemorySegmentType::CONSTANT, address - 0x10000};
+    }
+    // 스택 영역: 0x00020000 ~ 0x0011FFFF
+    else if (address < 0x120000) 
+    {
+        return {MemorySegmentType::STACK, address - 0x20000};
+    }
+    // 힙 영역: 0x00200000 ~ 0x002FFFFF
+    else if (address < 0x300000) 
+    {
+        return {MemorySegmentType::HEAP, address - 0x200000};
     }
     
-    // 실제 블록 시작 주소 (헤더 포함)
-    size_t blockStart = address - sizeof(uint64_t);
-    
-    // 할당된 사이즈 읽기
-    uint64_t blockSize = heapSegment.ReadUInt64(blockStart);
-    
-    // 간단한 구현: 실제로 메모리를 해제하진 않고, 할당 정보만 지움
-    // 현재 구현에서는 메모리 재사용이나 최적화가 없음
-    // 보다 복잡한 메모리 관리 시스템이 필요할 수 있음
-    heapSegment.WriteUInt64(blockStart, 0);
+    throw MemoryAccessException("유효하지 않은 메모리 주소 접근");
 }
 
 } // namespace Memory
