@@ -75,7 +75,7 @@ public:
      * @param basePointer 이전 베이스 포인터
      * @param returnAddress 반환 주소
      */
-    void PushStackFrame(size_t basePointer, size_t returnAddress);
+    void EnterStackFrame(size_t basePointer, size_t returnAddress);
     
     /**
      * @brief 스택 프레임 정보 복원
@@ -83,7 +83,7 @@ public:
      * @param basePointer 복원할 베이스 포인터 주소
      * @param returnAddress 복원할 반환 주소
      */
-    void PopStackFrame(size_t& basePointer, size_t& returnAddress);
+    void LeaveStackFrame(size_t& basePointer, size_t& returnAddress);
     
 private:
     MemorySegment& _segment;          ///< 스택 세그먼트 참조
