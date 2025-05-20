@@ -1,8 +1,10 @@
 #include "StackMemory.h"
+#include "MemorySegment.h"
 #include <stdexcept>
+#include <mutex>
 
-namespace DarkMatterVM {
-namespace Memory {
+namespace DarkMatterVM::Memory 
+{
 
 StackMemory::StackMemory(MemorySegment& segment)
     : _segment(segment), _stackPointer(segment.GetSize())
@@ -107,14 +109,13 @@ void StackMemory::PopStackFrame(size_t& basePointer, size_t& returnAddress)
     _stackPointer += sizeof(uint64_t);
 }
 
-void StackMemory::_ValidateStack(size_t offset) const
+void StackMemory::_ValidateStack(size_t offset, size_t byteCount) const
 {
     // 이미 락이 걸린 상태에서 호출되므로 추가 락은 필요 없음
-    if (offset < 0 || offset >= _segment.GetSize())
+    if (offset >= _segment.GetSize() || offset + byteCount > _segment.GetSize())
     {
         throw MemoryAccessException("Stack access violation: out of bounds");
     }
 }
 
-} // namespace Memory
-} // namespace DarkMatterVM 
+} // namespace DarkMatterVM::Memory

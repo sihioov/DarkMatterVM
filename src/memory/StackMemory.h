@@ -1,17 +1,18 @@
 #pragma once
 #include <cstdint>
 #include <mutex>
-#include "MemoryManager.h"
+#include "MemorySegment.h"
 
-namespace DarkMatterVM {
-namespace Memory {
+namespace DarkMatterVM::Memory 
+{
 
 /**
  * @brief 스택 메모리
  * 
  * VM의 스택 메모리를 관리하는 클래스
  */
-class StackMemory {
+class StackMemory 
+{
 public:
     /**
      * @brief 스택 메모리 생성
@@ -95,8 +96,7 @@ private:
      * @param offset 확인할 스택 오프셋
      * @throw MemoryAccessException 스택 범위 초과 시
      */
-    void _ValidateStack(size_t offset) const;
+    void _ValidateStack(size_t offset, size_t byteCount = sizeof(uint64_t)) const;
 };
 
-} // namespace Memory
-} // namespace DarkMatterVM 
+} // namespace DarkMatterVM::Memory
