@@ -6,9 +6,7 @@
 #include <stdexcept>
 #include <unordered_map>
 
-namespace DarkMatterVM 
-{
-namespace Memory 
+namespace DarkMatterVM::Memory 
 {
 
 /// MemoryManager 구현
@@ -123,26 +121,26 @@ uint64_t MemoryManager::GetStackValue(size_t offset) const
     return _stackMemory->GetStackValue(offset);
 }
 
-void MemoryManager::PushStackFrame(size_t basePointer, size_t returnAddress)
+void MemoryManager::EnterStackFrame(size_t basePointer, size_t returnAddress)
 {
-    _stackMemory->PushStackFrame(basePointer, returnAddress);
+    _stackMemory->EnterStackFrame(basePointer, returnAddress);
 }
 
-void MemoryManager::PopStackFrame(size_t& basePointer, size_t& returnAddress)
+void MemoryManager::LeaveStackFrame(size_t& basePointer, size_t& returnAddress)
 {
-    _stackMemory->PopStackFrame(basePointer, returnAddress);
+    _stackMemory->LeaveStackFrame(basePointer, returnAddress);
 }
 
 // 힙 관련 메서드 구현
 
-size_t MemoryManager::AllocateHeap(size_t size)
+size_t MemoryManager::Allocate(size_t size)
 {
-    return _heapMemory->AllocateHeap(size);
+    return _heapMemory->Allocate(size);
 }
 
-void MemoryManager::FreeHeap(size_t address)
+void MemoryManager::Free(size_t address)
 {
-    _heapMemory->FreeHeap(address);
+    _heapMemory->Free(address);
 }
 
 void MemoryManager::ReadHeap(size_t address, void* buffer, size_t size)
@@ -191,5 +189,4 @@ std::pair<MemorySegmentType, size_t> MemoryManager::_ResolveAddress(size_t addre
     throw MemoryAccessException("유효하지 않은 메모리 주소 접근");
 }
 
-} // namespace Memory
-} // namespace DarkMatterVM
+} // namespace DarkMatterVM::Memory 

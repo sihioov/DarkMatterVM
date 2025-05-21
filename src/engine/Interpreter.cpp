@@ -239,7 +239,7 @@ void Interpreter::_Handle_PUSH8()
     uint8_t value = _FetchByte();
     
     // 스택에 푸시 (64비트로 확장)
-    _memory->PushUInt64(value);
+    _memory->PushStack(value);
 }
 
 void Interpreter::_Handle_PUSH16()
@@ -248,7 +248,7 @@ void Interpreter::_Handle_PUSH16()
     uint16_t value = static_cast<uint16_t>(_FetchInt16());
     
     // 스택에 푸시 (64비트로 확장)
-    _memory->PushUInt64(value);
+    _memory->PushStack(value);
 }
 
 void Interpreter::_Handle_PUSH32()
@@ -257,7 +257,7 @@ void Interpreter::_Handle_PUSH32()
     uint32_t value = static_cast<uint32_t>(_FetchInt32());
     
     // 스택에 푸시 (64비트로 확장)
-    _memory->PushUInt64(value);
+    _memory->PushStack(value);
 }
 
 void Interpreter::_Handle_PUSH64()
@@ -266,140 +266,140 @@ void Interpreter::_Handle_PUSH64()
     uint64_t value = static_cast<uint64_t>(_FetchInt64());
     
     // 스택에 푸시
-    _memory->PushUInt64(value);
+    _memory->PushStack(value);
 }
 
 void Interpreter::_Handle_POP()
 {
     // 스택에서 값 제거
-    _memory->PopUInt64();
+    _memory->PopStack();
 }
 
 void Interpreter::_Handle_DUP()
 {
     // 스택 최상위 값 읽기
-    uint64_t value = _memory->PopUInt64();
+    uint64_t value = _memory->PopStack();
     
     // 두 번 푸시하여 복제
-    _memory->PushUInt64(value);
-    _memory->PushUInt64(value);
+    _memory->PushStack(value);
+    _memory->PushStack(value);
 }
 
 void Interpreter::_Handle_SWAP()
 {
     // 스택 최상위 두 값 교환
-    uint64_t a = _memory->PopUInt64();
-    uint64_t b = _memory->PopUInt64();
+    uint64_t a = _memory->PopStack();
+    uint64_t b = _memory->PopStack();
     
-    _memory->PushUInt64(a);
-    _memory->PushUInt64(b);
+    _memory->PushStack(a);
+    _memory->PushStack(b);
 }
 
 // 산술 연산 핸들러 구현
 void Interpreter::_Handle_ADD()
 {
-    uint64_t b = _memory->PopUInt64();
-    uint64_t a = _memory->PopUInt64();
-    _memory->PushUInt64(a + b);
+    uint64_t b = _memory->PopStack();
+    uint64_t a = _memory->PopStack();
+    _memory->PushStack(a + b);
 }
 
 void Interpreter::_Handle_SUB()
 {
-    uint64_t b = _memory->PopUInt64();
-    uint64_t a = _memory->PopUInt64();
-    _memory->PushUInt64(a - b);
+    uint64_t b = _memory->PopStack();
+    uint64_t a = _memory->PopStack();
+    _memory->PushStack(a - b);
 }
 
 void Interpreter::_Handle_MUL()
 {
-    uint64_t b = _memory->PopUInt64();
-    uint64_t a = _memory->PopUInt64();
-    _memory->PushUInt64(a * b);
+    uint64_t b = _memory->PopStack();
+    uint64_t a = _memory->PopStack();
+    _memory->PushStack(a * b);
 }
 
 void Interpreter::_Handle_DIV()
 {
-    uint64_t b = _memory->PopUInt64();
-    uint64_t a = _memory->PopUInt64();
+    uint64_t b = _memory->PopStack();
+    uint64_t a = _memory->PopStack();
     
     if (b == 0) 
     {
         throw std::runtime_error("0으로 나누기 시도");
     }
     
-    _memory->PushUInt64(a / b);
+    _memory->PushStack(a / b);
 }
 
 void Interpreter::_Handle_MOD()
 {
-    uint64_t b = _memory->PopUInt64();
-    uint64_t a = _memory->PopUInt64();
+    uint64_t b = _memory->PopStack();
+    uint64_t a = _memory->PopStack();
     
     if (b == 0) 
     {
         throw std::runtime_error("0으로 나누기 시도 (나머지 연산)");
     }
     
-    _memory->PushUInt64(a % b);
+    _memory->PushStack(a % b);
 }
 
 // 비트 연산 핸들러 구현
 void Interpreter::_Handle_AND()
 {
-    uint64_t b = _memory->PopUInt64();
-    uint64_t a = _memory->PopUInt64();
-    _memory->PushUInt64(a & b);
+    uint64_t b = _memory->PopStack();
+    uint64_t a = _memory->PopStack();
+    _memory->PushStack(a & b);
 }
 
 void Interpreter::_Handle_OR()
 {
-    uint64_t b = _memory->PopUInt64();
-    uint64_t a = _memory->PopUInt64();
-    _memory->PushUInt64(a | b);
+    uint64_t b = _memory->PopStack();
+    uint64_t a = _memory->PopStack();
+    _memory->PushStack(a | b);
 }
 
 void Interpreter::_Handle_XOR()
 {
-    uint64_t b = _memory->PopUInt64();
-    uint64_t a = _memory->PopUInt64();
-    _memory->PushUInt64(a ^ b);
+    uint64_t b = _memory->PopStack();
+    uint64_t a = _memory->PopStack();
+    _memory->PushStack(a ^ b);
 }
 
 void Interpreter::_Handle_NOT()
 {
-    uint64_t a = _memory->PopUInt64();
-    _memory->PushUInt64(~a);
+    uint64_t a = _memory->PopStack();
+    _memory->PushStack(~a);
 }
 
 void Interpreter::_Handle_SHL()
 {
-    uint64_t b = _memory->PopUInt64();
-    uint64_t a = _memory->PopUInt64();
+    uint64_t b = _memory->PopStack();
+    uint64_t a = _memory->PopStack();
     
     // 시프트 양이 64 이상이면 결과는 0
     if (b >= 64) 
     {
-        _memory->PushUInt64(0);
+        _memory->PushStack(0);
     } 
     else 
     {
-        _memory->PushUInt64(a << b);
+        _memory->PushStack(a << b);
     }
 }
 
 void Interpreter::_Handle_SHR()
 {
-    uint64_t b = _memory->PopUInt64();
-    uint64_t a = _memory->PopUInt64();
+    uint64_t b = _memory->PopStack();
+    uint64_t a = _memory->PopStack();
     
     // 시프트 양이 64 이상이면 결과는 0
     if (b >= 64) 
     {
-        _memory->PushUInt64(0);
+        _memory->PushStack(0);
     } 
     else 
     {
-        _memory->PushUInt64(a >> b);
+        _memory->PushStack(a >> b);
     }
 }
 
@@ -407,23 +407,23 @@ void Interpreter::_Handle_SHR()
 void Interpreter::_Handle_LOAD8()
 {
     // 주소를 스택에서 가져옴
-    uint64_t address = _memory->PopUInt64();
+    uint64_t address = _memory->PopStack();
     
     // 힙 메모리에서 바이트 읽기
     auto& heapSegment = _memory->GetSegment(Memory::MemorySegmentType::HEAP);
     uint8_t value = heapSegment.ReadByte(static_cast<size_t>(address));
     
     // 결과를 스택에 푸시
-    _memory->PushUInt64(value);
+    _memory->PushStack(value);
 }
 
 void Interpreter::_Handle_STORE8()
 {
     // 값을 스택에서 가져옴
-    uint64_t value = _memory->PopUInt64();
+    uint64_t value = _memory->PopStack();
     
     // 주소를 스택에서 가져옴
-    uint64_t address = _memory->PopUInt64();
+    uint64_t address = _memory->PopStack();
     
     // 힙 메모리에 바이트 쓰기
     auto& heapSegment = _memory->GetSegment(Memory::MemorySegmentType::HEAP);
@@ -445,13 +445,14 @@ void Interpreter::_Handle_JMP()
 void Interpreter::_Handle_JZ()
 {
     // 조건 가져오기
-    uint64_t condition = _memory->PopUInt64();
+    uint64_t condition = _memory->PopStack();
     
     // 점프 오프셋 가져오기
     int16_t offset = _FetchInt16();
     
     // 조건이 0이면 점프
-    if (condition == 0) {
+    if (condition == 0) 
+    {
         _ip += offset;
     }
 }
@@ -459,13 +460,14 @@ void Interpreter::_Handle_JZ()
 void Interpreter::_Handle_JNZ()
 {
     // 조건 가져오기
-    uint64_t condition = _memory->PopUInt64();
+    uint64_t condition = _memory->PopStack();
     
     // 점프 오프셋 가져오기
     int16_t offset = _FetchInt16();
     
     // 조건이 0이 아니면 점프
-    if (condition != 0) {
+    if (condition != 0) 
+    {
         _ip += offset;
     }
 }
@@ -478,7 +480,7 @@ void Interpreter::_Handle_HALT()
     // 마지막 스택 값을 반환 값으로 설정 (있는 경우)
     if (_memory->GetStackPointer() < _memory->GetSegment(Memory::MemorySegmentType::STACK).GetSize()) 
     {
-        _returnValue = _memory->PopUInt64();
+        _returnValue = _memory->PopStack();
     }
     
     // 실행 중지
@@ -488,49 +490,49 @@ void Interpreter::_Handle_HALT()
 void Interpreter::_Handle_LOAD16()
 {
     // 주소를 스택에서 가져옴
-    uint64_t address = _memory->PopUInt64();
+    uint64_t address = _memory->PopStack();
     
     // 힙 메모리에서 2바이트 읽기
     auto& heapSegment = _memory->GetSegment(Memory::MemorySegmentType::HEAP);
     uint16_t value = heapSegment.ReadUInt16(static_cast<size_t>(address));
     
     // 결과를 스택에 푸시
-    _memory->PushUInt64(value);
+    _memory->PushStack(value);
 }
 
 void Interpreter::_Handle_LOAD32()
 {
     // 주소를 스택에서 가져옴
-    uint64_t address = _memory->PopUInt64();
+    uint64_t address = _memory->PopStack();
     
     // 힙 메모리에서 4바이트 읽기
     auto& heapSegment = _memory->GetSegment(Memory::MemorySegmentType::HEAP);
     uint32_t value = heapSegment.ReadUInt32(static_cast<size_t>(address));
     
     // 결과를 스택에 푸시
-    _memory->PushUInt64(value);
+    _memory->PushStack(value);
 }
 
 void Interpreter::_Handle_LOAD64()
 {
     // 주소를 스택에서 가져옴
-    uint64_t address = _memory->PopUInt64();
+    uint64_t address = _memory->PopStack();
     
     // 힙 메모리에서 8바이트 읽기
     auto& heapSegment = _memory->GetSegment(Memory::MemorySegmentType::HEAP);
     uint64_t value = heapSegment.ReadUInt64(static_cast<size_t>(address));
     
     // 결과를 스택에 푸시
-    _memory->PushUInt64(value);
+    _memory->PushStack(value);
 }
 
 void Interpreter::_Handle_STORE16()
 {
     // 값을 스택에서 가져옴
-    uint64_t value = _memory->PopUInt64();
+    uint64_t value = _memory->PopStack();
     
     // 주소를 스택에서 가져옴
-    uint64_t address = _memory->PopUInt64();
+    uint64_t address = _memory->PopStack();
     
     // 힙 메모리에 2바이트 쓰기
     auto& heapSegment = _memory->GetSegment(Memory::MemorySegmentType::HEAP);
@@ -540,10 +542,10 @@ void Interpreter::_Handle_STORE16()
 void Interpreter::_Handle_STORE32()
 {
     // 값을 스택에서 가져옴
-    uint64_t value = _memory->PopUInt64();
+    uint64_t value = _memory->PopStack();
     
     // 주소를 스택에서 가져옴
-    uint64_t address = _memory->PopUInt64();
+    uint64_t address = _memory->PopStack();
     
     // 힙 메모리에 4바이트 쓰기
     auto& heapSegment = _memory->GetSegment(Memory::MemorySegmentType::HEAP);
@@ -553,10 +555,10 @@ void Interpreter::_Handle_STORE32()
 void Interpreter::_Handle_STORE64()
 {
     // 값을 스택에서 가져옴
-    uint64_t value = _memory->PopUInt64();
+    uint64_t value = _memory->PopStack();
     
     // 주소를 스택에서 가져옴
-    uint64_t address = _memory->PopUInt64();
+    uint64_t address = _memory->PopStack();
     
     // 힙 메모리에 8바이트 쓰기
     auto& heapSegment = _memory->GetSegment(Memory::MemorySegmentType::HEAP);
@@ -566,10 +568,10 @@ void Interpreter::_Handle_STORE64()
 void Interpreter::_Handle_JG()
 {
     // 두 번째 값
-    uint64_t b = _memory->PopUInt64();
+    uint64_t b = _memory->PopStack();
     
     // 첫 번째 값
-    uint64_t a = _memory->PopUInt64();
+    uint64_t a = _memory->PopStack();
     
     // 점프 오프셋 가져오기
     int16_t offset = _FetchInt16();
@@ -584,10 +586,10 @@ void Interpreter::_Handle_JG()
 void Interpreter::_Handle_JL()
 {
     // 두 번째 값
-    uint64_t b = _memory->PopUInt64();
+    uint64_t b = _memory->PopStack();
     
     // 첫 번째 값
-    uint64_t a = _memory->PopUInt64();
+    uint64_t a = _memory->PopStack();
     
     // 점프 오프셋 가져오기
     int16_t offset = _FetchInt16();
@@ -602,10 +604,10 @@ void Interpreter::_Handle_JL()
 void Interpreter::_Handle_JGE()
 {
     // 두 번째 값
-    uint64_t b = _memory->PopUInt64();
+    uint64_t b = _memory->PopStack();
     
     // 첫 번째 값
-    uint64_t a = _memory->PopUInt64();
+    uint64_t a = _memory->PopStack();
     
     // 점프 오프셋 가져오기
     int16_t offset = _FetchInt16();
@@ -620,10 +622,10 @@ void Interpreter::_Handle_JGE()
 void Interpreter::_Handle_JLE()
 {
     // 두 번째 값
-    uint64_t b = _memory->PopUInt64();
+    uint64_t b = _memory->PopStack();
     
     // 첫 번째 값
-    uint64_t a = _memory->PopUInt64();
+    uint64_t a = _memory->PopStack();
     
     // 점프 오프셋 가져오기
     int16_t offset = _FetchInt16();
@@ -638,10 +640,10 @@ void Interpreter::_Handle_JLE()
 void Interpreter::_Handle_CALL()
 {
     // 호출할 함수 주소 가져오기
-    uint64_t targetAddress = _memory->PopUInt64();
+    uint64_t targetAddress = _memory->PopStack();
     
     // 현재 명령어 포인터를 스택에 저장 (반환 주소)
-    _memory->PushUInt64(_ip);
+    _memory->PushStack(_ip);
     
     // 함수 주소로 점프
     _ip = static_cast<size_t>(targetAddress);
@@ -650,7 +652,7 @@ void Interpreter::_Handle_CALL()
 void Interpreter::_Handle_RET()
 {
     // 반환 주소를 스택에서 가져옴
-    uint64_t returnAddress = _memory->PopUInt64();
+    uint64_t returnAddress = _memory->PopStack();
     
     // 반환 주소로 점프
     _ip = static_cast<size_t>(returnAddress);
@@ -659,22 +661,22 @@ void Interpreter::_Handle_RET()
 void Interpreter::_Handle_ALLOC()
 {
     // 할당할 메모리 크기를 스택에서 가져옴
-    uint64_t size = _memory->PopUInt64();
+    uint64_t size = _memory->PopStack();
     
     // 메모리 할당
-    size_t address = _memory->AllocateHeap(static_cast<size_t>(size));
+    size_t address = _memory->Allocate(static_cast<size_t>(size));
     
     // 할당된 메모리 주소를 스택에 푸시
-    _memory->PushUInt64(address);
+    _memory->PushStack(address);
 }
 
 void Interpreter::_Handle_FREE()
 {
     // 해제할 메모리 주소를 스택에서 가져옴
-    uint64_t address = _memory->PopUInt64();
+    uint64_t address = _memory->PopStack();
     
     // 메모리 해제
-    _memory->FreeHeap(static_cast<size_t>(address));
+    _memory->Free(static_cast<size_t>(address));
 }
 
 void Interpreter::_Handle_HOSTCALL()

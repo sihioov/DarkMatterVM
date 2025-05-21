@@ -4,9 +4,10 @@
 #include <memory>
 #include <stdexcept>
 #include <unordered_map>
+#include "MemorySegment.h"
 
-namespace DarkMatterVM {
-namespace Memory {
+namespace DarkMatterVM::Memory 
+{
 
 class StackMemory;
 class HeapMemory;
@@ -16,7 +17,8 @@ class HeapMemory;
  * 
  * VM의 전체 메모리를 관리하는 클래스
  */
-class MemoryManager {
+class MemoryManager 
+{
 public:
     /**
      * @brief 메모리 관리자 생성
@@ -145,7 +147,7 @@ public:
      * @param basePointer 이전 베이스 포인터
      * @param returnAddress 반환 주소
      */
-    void PushStackFrame(size_t basePointer, size_t returnAddress);
+    void EnterStackFrame(size_t basePointer, size_t returnAddress);
     
     /**
      * @brief 스택 프레임 정보 복원
@@ -153,7 +155,7 @@ public:
      * @param basePointer 복원할 베이스 포인터 주소
      * @param returnAddress 복원할 반환 주소
      */
-    void PopStackFrame(size_t& basePointer, size_t& returnAddress);
+    void LeaveStackFrame(size_t& basePointer, size_t& returnAddress);
     
     // 힙 편의 메서드
     
@@ -163,14 +165,14 @@ public:
      * @param size 할당할 크기
      * @return size_t 할당된 메모리 시작 주소
      */
-    size_t AllocateHeap(size_t size);
+    size_t Allocate(size_t size);
     
     /**
      * @brief 힙 메모리 해제
      * 
      * @param address 해제할 메모리 주소
      */
-    void FreeHeap(size_t address);
+    void Free(size_t address);
     
     /**
      * @brief 힙 메모리에서 데이터 읽기
@@ -190,6 +192,28 @@ public:
      */
     void WriteHeap(size_t address, const void* data, size_t size);
     
+    /**
+     * @brief 특정 세그먼트 조회
+     * 
+     * @param t 세그먼트 유형
+     * @return MemorySegment& 세그먼트 참조
+     */
+    MemorySegment& operator[](MemorySegmentType t) 
+    {
+        return *(_segments[static_cast<size_t>(t)]);
+    }
+
+    /**
+     * @brief 상수 세그먼트 조회
+     * 
+     * @param t 세그먼트 유형
+     * @return const MemorySegment& 상수 세그먼트 참조
+     */
+    const MemorySegment& operator[](MemorySegmentType t) const 
+    {
+        return const_cast<MemoryManager*>(this)->operator[](t);
+    }
+
 private:
     std::vector<std::unique_ptr<MemorySegment>> _segments;  ///< 메모리 세그먼트 목록
     std::unique_ptr<StackMemory> _stackMemory;                ///< 스택 메모리
@@ -204,5 +228,4 @@ private:
     std::pair<MemorySegmentType, size_t> _ResolveAddress(size_t address) const;
 };
 
-} // namespace Memory
-} // namespace DarkMatterVM 
+} // namespace DarkMatterVM::Memory 

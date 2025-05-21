@@ -76,25 +76,25 @@ uint64_t StackMemory::GetStackValue(size_t offset) const
     return _segment.ReadUInt64(address);
 }
 
-void StackMemory::PushStackFrame(size_t basePointer, size_t returnAddress)
+void StackMemory::EnterStackFrame(size_t basePointer, size_t returnAddress)
 {
     std::lock_guard<std::mutex> lock(_stackMutex);
     
     // 반환 주소 푸시
     _stackPointer -= sizeof(uint64_t);
-    _ValidateStack(_stackPointer);
+    _ValidateStack(_stackPointer, sizeof(uint64_t));
     _segment.WriteUInt64(_stackPointer, returnAddress);
     
     // 이전 베이스 포인터 푸시
     _stackPointer -= sizeof(uint64_t);
-    _ValidateStack(_stackPointer);
+    _ValidateStack(_stackPointer, sizeof(uint64_t));
     _segment.WriteUInt64(_stackPointer, basePointer);
     
     // 새 베이스 포인터 설정
     // 실제로는 Interpreter에서 이 값을 저장하고 관리해야 함
 }
 
-void StackMemory::PopStackFrame(size_t& basePointer, size_t& returnAddress)
+void StackMemory::LeaveStackFrame(size_t& basePointer, size_t& returnAddress)
 {
     std::lock_guard<std::mutex> lock(_stackMutex);
     

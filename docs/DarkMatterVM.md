@@ -138,49 +138,7 @@ DarkMatterVM/
 ├── docs/
 │   ├── design.md
 │   └── api.md
-├── include/
-│   └── DarkMatterVM/
-│       ├── Translator/
-│       │   ├── AST/
-│       │   │   └── ASTNode.h
-│       │   ├── CodeGen/
-│       │   │   └── BytecodeBuilder.h
-│       │   ├── Optimizer/
-│       │   │   └── ConstantFolding.h
-│       │   ├── Assembler/
-│       │   │   ├── Parser.h
-│       │   │   ├── SymbolTable.h
-│       │   │   └── CodeEmitter.h
-│       │   └── Translator.h
-│       ├── Packer/
-│       │   ├── SectionBuilder.h
-│       │   └── Packer.h
-│       ├── Loader/
-│       │   ├── BytecodeReader.h
-│       │   └── Loader.h
-│       ├── HostInterface/
-│       │   ├── ThreadAPI.h
-│       │   └── HostInterface.h
-│       ├── Obfuscation/
-│       │   ├── ControlFlowFlattener.h
-│       │   └── ObfuscationUtils.h
-│       ├── Engine/
-│       │   ├── Opcode.h
-│       │   ├── Decoder/
-│       │   │   ├── BytecodeParser.h
-│       │   │   └── OpcodeDecoder.h
-│       │   ├── Executor/
-│       │   │   ├── ArithmeticExec.h
-│       │   │   ├── FlowControlExec.h
-│       │   │   └── HostCallExec.h
-│       │   └── Interpreter.h
-│       ├── Memory/
-│       │   ├── StackManager.h
-│       │   ├── HeapManager.h
-│       │   └── MemoryManager.h
-│       └── ControlFlow/
-│           ├── FrameLayout.h
-│           └── ControlFlowManager.h
+│
 ├── src/
 │   ├── translator/
 │   │   ├── ast/
@@ -260,3 +218,4 @@ DarkMatterVM/
     └── multithread-vm/
         ├── CMakeLists.txt
         └── Main.cpp
+```

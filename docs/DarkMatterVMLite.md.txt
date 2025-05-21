@@ -1,0 +1,79 @@
+# DarkMatterVM (핵심 기능만)
+
+## 프로젝트 개요
+- **이름**: DarkMatterVM  
+- **목적**:  
+  - C++ 함수를 “바이트코드”로 가상화(Translator)  
+  - 가상화된 바이트코드를 런타임에 해석·실행(Interpreter)  
+- **범위**:  
+  - **Translator** → **Loader** → **Interpreter**  
+  - 그 외(Packer, Obfuscation, HostInterface 등)는 제거
+
+---
+
+## 모듈 구조
+
+### Translator  
+- **입력**: C++ AST  
+- **출력**: VM 바이트코드 (`.dmvm` 바이너리 또는 메모리 블록)  
+- **서브모듈**  
+  - **AST**  
+    - `ASTNode.h/.cpp` (리터럴, 연산자, 변수 등)  
+  - **CodeGen**  
+    - `BytecodeBuilder.h/.cpp` (노드 → opcode 시퀀스)  
+  - **Optimizer** *(선택)*  
+    - `ConstantFolding.h/.cpp` (간단 최적화)  
+
+### Loader  
+- **역할**: Translator가 만든 바이트코드를 메모리로 읽어들임  
+- **서브모듈**  
+  - `BytecodeReader.h/.cpp` (파일·버퍼 → `std::vector<uint8_t>`)  
+
+### Engine (Interpreter)  
+- **역할**: 바이트코드 fetch → decode → execute  
+- **구성**  
+  - **Opcode 정의** (`Opcode.h`)  
+  - **Interpreter** (`Interpreter.h/.cpp`)  
+    - `while` 루프 + `switch` 분기  
+    - `PUSH`/`POP`/`ADD`/`CALL`/`RET` 등 처리  
+  - **MemoryManager** (`MemoryManager.h/.cpp`)  
+    - 스택(operand + call) & 힙 기본 지원  
+    - `ReadByte`, `WriteUInt32`, `PushStack`, `PopStackFrame` 등  
+
+---
+
+## 디렉토리 구조
+
+```text
+DarkMatterVM/
+├── CMakeLists.txt
+├── docs/
+│   └── design.md           # 위 설계 요약
+├── include/
+│   └── DarkMatterVM/
+│       ├── Translator/
+│       │   ├── AST/
+│       │   │   └── ASTNode.h
+│       │   ├── CodeGen/
+│       │   │   └── BytecodeBuilder.h
+│       │   └── Translator.h
+│       ├── Loader/
+│       │   └── BytecodeReader.h
+│       └── Engine/
+│           ├── Opcode.h
+│           ├── Interpreter.h
+│           └── MemoryManager.h
+├── src/
+│   ├── translator/
+│   │   ├── ASTNode.cpp
+│   │   ├── BytecodeBuilder.cpp
+│   │   └── Translator.cpp
+│   ├── loader/
+│   │   └── BytecodeReader.cpp
+│   └── engine/
+│       ├── Opcode.cpp       # (optional: opcode→enum 간 호환 함수)
+│       ├── Interpreter.cpp
+│       └── MemoryManager.cpp
+└── tests/
+    ├── TestTranslator.cpp
+    └── TestInterpreter.cpp

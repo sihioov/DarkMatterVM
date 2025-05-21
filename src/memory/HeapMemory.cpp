@@ -1,9 +1,7 @@
 #include "HeapMemory.h"
 #include <stdexcept>
 
-namespace DarkMatterVM 
-{
-namespace Memory 
+namespace DarkMatterVM::Memory
 {
 
 HeapMemory::HeapMemory(MemorySegment& segment)
@@ -11,29 +9,33 @@ HeapMemory::HeapMemory(MemorySegment& segment)
 {
 }
 
-size_t HeapMemory::AllocateHeap(size_t size)
+size_t HeapMemory::Allocate(size_t size)
 {
+    if (size == 0)
+    {
+        throw std::runtime_error("HeapMemory: invalid allocation size");
+    }
+
+    auto alignedSize = _Aligned(size);
+
     std::lock_guard<std::mutex> lock(_heapMutex);
     
-    // 8바이트 정렬
-    size = (size + (sizeof(uint64_t) - 1)) & ~(sizeof(uint64_t) - 1);
-    
     // 간단한 선형 할당
-    if (_nextHeapAddress + size > _segment.GetSize())
+    if (_nextHeapAddress + alignedSize > _segment.GetSize())
     {
         throw std::runtime_error("HeapMemory: heap allocation failed (out of memory)");
     }
     
     size_t address = _nextHeapAddress;
-    _nextHeapAddress += size;
+    _nextHeapAddress += alignedSize;
     
     // 할당 정보 저장
-    _allocatedBlocks[address] = size;
+    _allocatedBlocks[address] = alignedSize;
     
     return address;
 }
 
-void HeapMemory::FreeHeap(size_t address)
+void HeapMemory::Free(size_t address)
 {
     std::lock_guard<std::mutex> lock(_heapMutex);
     
@@ -64,19 +66,25 @@ void HeapMemory::WriteHeap(size_t address, const void* data, size_t size)
     _segment.Write(address, size, data);
 }
 
-void HeapMemory::_ValidateAccess(size_t address, size_t size)
+void HeapMemory::_ValidateAccess(size_t address, size_t size) const
 {
-    auto it = _allocatedBlocks.find(address);
-    if (it == _allocatedBlocks.end())
+    // 1) addr 보다 큰 첫 블록(upper_bound)을 찾고,
+    //    그 앞 블록(이전 반복자)이 실제로 해당 addr을 포함하는지 검사
+    auto it = _allocatedBlocks.upper_bound(address);
+    if (it == _allocatedBlocks.begin()) 
     {
-        throw std::runtime_error("HeapMemory: invalid heap address for access");
+        throw std::out_of_range("HeapMemory: invalid heap address for access");
     }
-    
-    if (size > it->second)
+    --it;
+
+    size_t blockAddr = it->first;
+    size_t blockSize = it->second;
+
+    // 2) [addr, addr+size) 가 블록 범위 내에 완전히 들어오는지 확인
+    if (address < blockAddr || address + size > blockAddr + blockSize) 
     {
-        throw std::runtime_error("HeapMemory: access out of bounds");
+        throw std::out_of_range("HeapMemory: access out of bounds");
     }
 }
 
-} // namespace Memory
-} // namespace DarkMatterVM 
+} // namespace DarkMatterVM::Memory 

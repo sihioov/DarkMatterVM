@@ -19,7 +19,10 @@ public:
      * 
      * @param segment 스택 세그먼트 참조
      */
-    StackMemory(MemorySegment& segment);
+    explicit StackMemory(MemorySegment& segment);
+
+    StackMemory(const StackMemory&)            = delete;
+    StackMemory& operator=(const StackMemory&) = delete;
     
     /**
      * @brief 스택 메모리 소멸자

@@ -60,7 +60,7 @@ public:
      */
     virtual ~MemorySegment() = default;
     
-    /**
+     /**
      * @brief 메모리 읽기
      * 
      * @param offset 세그먼트 내 오프셋
@@ -68,7 +68,11 @@ public:
      * @param buffer 데이터를 저장할 버퍼
      * @throw MemoryAccessException 읽기 권한 없거나 범위 초과 시
      */
-    void Read(size_t offset, size_t size, void* buffer) const;
+    inline void Read(size_t offset, size_t size, void* buffer) const
+    {
+        _ValidateAccess(offset, size, MemoryAccessFlags::READ);
+        std::memcpy(buffer, GetData() + offset, size);
+    }
     
     /**
      * @brief 메모리 쓰기
@@ -78,8 +82,12 @@ public:
      * @param data 쓸 데이터
      * @throw MemoryAccessException 쓰기 권한 없거나 범위 초과 시
      */
-    void Write(size_t offset, size_t size, const void* data);
-    
+    inline void Write(size_t offset, size_t size, const void* data)
+    {
+        _ValidateAccess(offset, size, MemoryAccessFlags::WRITE);
+        std::memcpy(GetData() + offset, data, size);
+    }
+
     /**
      * @brief 바이트 한 개 읽기
      * 
@@ -185,12 +193,6 @@ public:
     const uint8_t* GetData() const { return _memory.get(); }
     
 private:
-    std::unique_ptr<uint8_t[]> _memory; ///< 실제 메모리 저장 공간 (OS 힙에 할당)
-    //uint8_t* _memory;               ///< 실제 메모리 저장 공간 (OS 힙에 할당)
-    size_t _size;                   ///< 메모리 크기
-    MemorySegmentType _type;        ///< 세그먼트 유형
-    uint8_t _accessFlags;           ///< 접근 권한 플래그
-    
     /**
      * @brief 메모리 접근 유효성 검사
      * 
@@ -200,6 +202,11 @@ private:
      * @throw MemoryAccessException 접근 권한 없거나 범위 초과 시
      */
     void _ValidateAccess(size_t offset, size_t size, MemoryAccessFlags flag) const;
+
+    std::unique_ptr<uint8_t[]> _memory; ///< 실제 메모리 저장 공간 (OS 힙에 할당)
+    size_t _size;                   ///< 메모리 크기
+    MemorySegmentType _type;        ///< 세그먼트 유형
+    uint8_t _accessFlags;           ///< 접근 권한 플래그
 };
 
 } // namespace DarkMatterVM::Memory
