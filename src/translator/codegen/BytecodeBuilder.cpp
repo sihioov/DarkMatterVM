@@ -1,7 +1,11 @@
-#include "BytecodeBuilder.h"
+﻿#include "BytecodeBuilder.h"
 #include <iostream>
 #include <sstream>
 #include <iomanip>
+#include "../ast/nodes/ContainerNodes.h"
+#include "../ast/nodes/LiteralNodes.h"
+#include "../ast/nodes/OperatorNodes.h"
+#include "../ast/nodes/VariableNodes.h"
 
 namespace DarkMatterVM 
 {

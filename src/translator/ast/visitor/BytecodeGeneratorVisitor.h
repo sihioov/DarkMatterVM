@@ -5,7 +5,7 @@
 #include <string>
 #include <cstdint>
 #include "ASTVisitor.h"
-#include "../../../include/Opcodes.h"
+#include <Opcodes.h>
 
 namespace DarkMatterVM 
 {
@@ -24,6 +24,10 @@ struct SymbolInfo
 	
 	SymbolInfo(const std::string& name, const std::string& type, size_t address, bool isGlobal = false)
 		: name(name), type(type), address(address), isGlobal(isGlobal) {}
+
+	SymbolInfo()
+		: name(), type(), address(0), isGlobal(false)
+	{}
 };
 
 /**

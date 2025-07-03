@@ -1,5 +1,10 @@
 #include "ConstantFolding.h"
-#include "../ast/ASTNode.h"
+#include "../ast/base/OperatorTypes.h"
+#include "../ast/base/ASTNode.h"
+#include "../ast/nodes/ContainerNodes.h"
+#include "../ast/nodes/LiteralNodes.h"
+#include "../ast/nodes/OperatorNodes.h"
+#include "../ast/nodes/VariableNodes.h"
 
 namespace DarkMatterVM 
 {

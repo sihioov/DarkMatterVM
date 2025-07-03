@@ -4,8 +4,8 @@
 #include <vector>
 #include <memory>
 #include <cstdint>
-#include "../common/Logger.h"
-#include "ast/ASTNode.h"
+#include <common/Logger.h>
+#include "ast/base/ASTNode.h"
 
 namespace DarkMatterVM 
 {

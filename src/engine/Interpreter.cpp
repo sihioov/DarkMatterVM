@@ -116,7 +116,9 @@ void Interpreter::DumpState() const
 
 void Interpreter::PushParameter(uint64_t value)
 {
-    _memory->PushUInt64(value);
+    //Todo
+    _memory->PopStack();
+    //_memory->PopStack(value);
 }
 
 uint8_t Interpreter::_FetchByte()
@@ -690,13 +692,13 @@ void Interpreter::_Handle_HOSTCALL()
     {
         case 0: // 값 출력
         {
-            uint64_t value = _memory->PopUInt64();
+            uint64_t value = _memory->PopStack();
             std::cout << "호스트 출력: " << value << std::endl;
             break;
         }
         case 1: // 문자 출력
         {
-            uint64_t value = _memory->PopUInt64();
+            uint64_t value = _memory->PopStack();
             std::cout << "호스트 문자 출력: " << static_cast<char>(value) << std::endl;
             break;
         }
@@ -711,10 +713,10 @@ void Interpreter::_Handle_THREAD()
     // 향후 멀티스레딩 지원을 위한 기본 구조만 구현
     
     // 스레드 함수 주소
-    uint64_t threadFunction = _memory->PopUInt64();
+    uint64_t threadFunction = _memory->PopStack();
     
     // 스레드 파라미터
-    uint64_t threadParam = _memory->PopUInt64();
+    uint64_t threadParam = _memory->PopStack();
     
     // 스레드 생성은 아직 지원하지 않으므로 경고 출력
     std::cerr << "경고: 스레드 기능은 아직 구현되지 않았습니다." << std::endl;
@@ -722,7 +724,8 @@ void Interpreter::_Handle_THREAD()
     std::cerr << "  파라미터: 0x" << std::hex << threadParam << std::dec << std::endl;
     
     // 스레드 ID를 스택에 넣음 (현재는 항상 0)
-    _memory->PushUInt64(0);
+    //_memory->PopStack(0);
+    _memory->PopStack();
 }
 
 } // namespace Engine

@@ -1,13 +1,13 @@
 #pragma once
 
-#include "../ast/ASTNode.h"
 #include <memory>
 
 namespace DarkMatterVM 
 {
 namespace Translator 
 {
-
+	class ASTNode;
+	class BinaryOpNode;
 /**
  * @brief 상수 폴딩 최적화
  * 

@@ -1,8 +1,8 @@
 #pragma once
 
 #include <cstdint>
-#include "../../../include/Opcodes.h"
-#include "../../../include/MemoryManager.h"
+#include <Opcodes.h>
+#include <memory/MemoryManager.h>
 
 namespace DarkMatterVM 
 {

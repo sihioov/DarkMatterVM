@@ -5,13 +5,19 @@
 #include <string>
 #include <unordered_map>
 #include <memory>
-#include "../ast/ASTNode.h"
-#include "../../../include/Opcodes.h"
+#include "../ast/base/ASTNode.h"
+#include "../ast/base/OperatorTypes.h"
+#include <Opcodes.h>
 
 namespace DarkMatterVM 
 {
 namespace Translator 
 {
+	class BlockNode;
+	class IntegerLiteralNode;
+	class VariableNode;
+	class VariableDeclNode;
+	class BinaryOpNode;
 
 /**
  * @brief 심볼 정보 (변수, 함수 등)
@@ -25,6 +31,10 @@ struct SymbolInfo
 	
 	SymbolInfo(const std::string& name, const std::string& type, size_t address, bool isGlobal = false)
 		: name(name), type(type), address(address), isGlobal(isGlobal) {}
+
+	SymbolInfo()
+		: name(), type(), address(0), isGlobal(false)
+	{}
 };
 
 /**

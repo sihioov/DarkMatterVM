@@ -1,9 +1,9 @@
-#include "Loader.h"
+﻿#include "Loader.h"
 #include <fstream>
 #include <cstring>
 #include <filesystem>
 #include <zlib.h>
-#include "../common/Logger.h"
+#include <common/Logger.h>
 
 namespace DarkMatterVM
 {
@@ -127,11 +127,11 @@ LoaderStatus Loader::LoadPackage(const std::string& packagePath)
         return LoaderStatus::UNKNOWN_ERROR;
     }
     
-    Logger::Info("Loader", "패키지 로드 성공: " + packagePath);
-    Logger::Info("Loader", "패키지 이름: " + _metadata.name);
-    Logger::Info("Loader", "바이트코드 모듈: " + std::to_string(_bytecodeModules.size()) + "개");
-    Logger::Info("Loader", "리소스: " + std::to_string(_resources.size()) + "개");
-    
+    Logger::Info("Loader", std::string("패키지 로드 성공: ") + packagePath);
+    Logger::Info("Loader", std::string("패키지 이름: ") + _metadata.name);
+    Logger::Info("Loader", std::string("바이트코드 모듈: ") + std::to_string(_bytecodeModules.size()) + "개");
+    Logger::Info("Loader", std::string("리소스: ") + std::to_string(_resources.size()) + "개");
+
     return LoaderStatus::SUCCESS;
 }
 

@@ -1,7 +1,7 @@
 // ObfuscationUtils.cpp
 
 #include "ObfuscationUtils.h"
-#include "control-flow/ControlFlowFlattener.h"
+#include "controlflow/ControlFlowFlattener.h"
 #include <algorithm>
 #include <random>
 #include <stdexcept>
@@ -50,12 +50,6 @@ uint32_t ObfuscationUtils::GenerateSeed()
     std::random_device rd;
 
     return static_cast<uint32_t>(rd());
-}
-
-std::vector<uint8_t> ObfuscationUtils::FlattenControlFlow(const std::vector<uint8_t>& bytecode)
-{
-    // TODO: 실제 제어 흐름 평탄화 알고리즘 구현
-    return bytecode;
 }
 
 void ObfuscationUtils::InsertMetadataTag(

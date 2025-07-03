@@ -10,10 +10,6 @@ MemorySegment::MemorySegment(MemorySegmentType type, size_t size, uint8_t access
 {
 }
 
-MemorySegment::~MemorySegment()
-{
-}
-
 uint8_t MemorySegment::ReadByte(size_t offset) const 
 {
     uint8_t value; 

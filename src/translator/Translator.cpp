@@ -1,11 +1,10 @@
-#include "Translator.h"
+﻿#include "Translator.h"
 #include <iostream>
 #include <sstream>
 #include <iomanip>
-#include "ast/ASTNode.h"
+#include "ast/base/ASTNode.h"
 #include "codegen/BytecodeBuilder.h"
 #include "assembler/Assembler.h"
-#include "optimizer/Optimizer.h"
 
 namespace DarkMatterVM 
 {

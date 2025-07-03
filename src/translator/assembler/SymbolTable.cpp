@@ -56,7 +56,7 @@ bool SymbolTable::AddConstant(const std::string& name, uint64_t value)
     // 이미 존재하는 심볼인지 확인
     if (_symbols.find(name) != _symbols.end()) 
     {
-        _LogError("Symbol '" + name + "' 이미 정의됨");
+       // _LogError("Symbol [" + name + "] 이미 정의됨");
 
         return false;
     }

@@ -3,8 +3,8 @@
 #include <cstdint>
 #include <unordered_map>
 #include <functional>
-#include "../../../include/Opcodes.h"
-#include "../../../include/MemoryManager.h"
+#include <Opcodes.h>
+#include <memory/MemoryManager.h>
 
 namespace DarkMatterVM 
 {

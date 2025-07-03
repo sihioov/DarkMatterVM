@@ -48,13 +48,6 @@ public:
     static uint32_t GenerateSeed();
 
     /**
-     * @brief 제어 흐름 평탄화(Flattening) 적용
-     * @param bytecode 원본 바이트코드
-     * @return 평탄화된 바이트코드 시퀀스
-     */
-    static std::vector<uint8_t> FlattenControlFlow(const std::vector<uint8_t>& bytecode);
-
-    /**
      * @brief 메타데이터 태그 삽입
      * @param bytecode 바이트코드 시퀀스 (참조)
      * @param offset 삽입할 위치 오프셋
@@ -69,7 +62,12 @@ public:
      * @return alignment의 배수로 올림된 값
      */
     static size_t Align(size_t value, size_t alignment);
-    
+
+    /**
+     * @brief 제어 흐름 평탄화(Flattening) 적용
+     * @param bytecode 원본 바이트코드
+     * @return 평탄화된 바이트코드 시퀀스
+     */
     static std::vector<uint8_t> FlattenControlFlow(const std::vector<uint8_t>& bytecode);
 };
 

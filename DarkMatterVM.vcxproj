@@ -19,22 +19,74 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\common\Logger.cpp" />
+    <ClCompile Include="src\controlflow\ControlFlowManager.cpp" />
+    <ClCompile Include="src\controlflow\FrameLayout.cpp" />
+    <ClCompile Include="src\engine\decoder\BytecodeParser.cpp" />
+    <ClCompile Include="src\engine\decoder\OpcodeDecoder.cpp" />
+    <ClCompile Include="src\engine\executor\ArithmeticExec.cpp" />
+    <ClCompile Include="src\engine\executor\FlowControlExec.cpp" />
+    <ClCompile Include="src\engine\executor\HostCallExec.cpp" />
     <ClCompile Include="src\engine\Interpreter.cpp" />
+    <ClCompile Include="src\loader\Loader.cpp" />
+    <ClCompile Include="src\loader\reader\BytecodeReader.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\memory\HeapMemory.cpp" />
     <ClCompile Include="src\memory\MemoryManager.cpp" />
+    <ClCompile Include="src\memory\MemorySegment.cpp" />
+    <ClCompile Include="src\memory\StackMemory.cpp" />
+    <ClCompile Include="src\obfuscation\controlflow\ControlFlowFlattener.cpp" />
+    <ClCompile Include="src\obfuscation\ObfuscationUtils.cpp" />
     <ClCompile Include="src\translator\assembler\Assembler.cpp" />
     <ClCompile Include="src\translator\assembler\CodeEmitter.cpp" />
     <ClCompile Include="src\translator\assembler\Parser.cpp" />
     <ClCompile Include="src\translator\assembler\SymbolTable.cpp" />
+    <ClCompile Include="src\translator\ast\ASTNodeFactory.cpp" />
+    <ClCompile Include="src\translator\ast\base\ASTNode.cpp" />
+    <ClCompile Include="src\translator\ast\nodes\ContainerNodes.cpp" />
+    <ClCompile Include="src\translator\ast\nodes\LiteralNodes.cpp" />
+    <ClCompile Include="src\translator\ast\nodes\OperatorNodes.cpp" />
+    <ClCompile Include="src\translator\ast\nodes\VariableNodes.cpp" />
+    <ClCompile Include="src\translator\ast\visitor\BytecodeGeneratorVisitor.cpp" />
+    <ClCompile Include="src\translator\codegen\BytecodeBuilder.cpp" />
+    <ClCompile Include="src\translator\optimizer\ConstantFolding.cpp" />
+    <ClCompile Include="src\translator\Translator.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Opcodes.h" />
+    <ClInclude Include="src\common\Logger.h" />
+    <ClInclude Include="src\controlflow\ControlFlowManager.h" />
+    <ClInclude Include="src\controlflow\FrameLayout.h" />
+    <ClInclude Include="src\engine\decoder\BytecodeParser.h" />
+    <ClInclude Include="src\engine\decoder\OpcodeDecoder.h" />
+    <ClInclude Include="src\engine\executor\ArithmeticExec.h" />
+    <ClInclude Include="src\engine\executor\FlowControlExec.h" />
+    <ClInclude Include="src\engine\executor\HostCallExec.h" />
     <ClInclude Include="src\engine\Interpreter.h" />
+    <ClInclude Include="src\loader\Loader.h" />
+    <ClInclude Include="src\loader\reader\BytecodeReader.h" />
+    <ClInclude Include="src\memory\HeapMemory.h" />
     <ClInclude Include="src\memory\MemoryManager.h" />
+    <ClInclude Include="src\memory\MemorySegment.h" />
+    <ClInclude Include="src\memory\StackMemory.h" />
+    <ClInclude Include="src\obfuscation\controlflow\ControlFlowFlattener.h" />
+    <ClInclude Include="src\obfuscation\ObfuscationUtils.h" />
     <ClInclude Include="src\translator\assembler\Assembler.h" />
     <ClInclude Include="src\translator\assembler\CodeEmitter.h" />
     <ClInclude Include="src\translator\assembler\Parser.h" />
     <ClInclude Include="src\translator\assembler\SymbolTable.h" />
+    <ClInclude Include="src\translator\ast\ASTNodeFactory.h" />
+    <ClInclude Include="src\translator\ast\base\ASTNode.h" />
+    <ClInclude Include="src\translator\ast\base\OperatorTypes.h" />
+    <ClInclude Include="src\translator\ast\nodes\ContainerNodes.h" />
+    <ClInclude Include="src\translator\ast\nodes\LiteralNodes.h" />
+    <ClInclude Include="src\translator\ast\nodes\OperatorNodes.h" />
+    <ClInclude Include="src\translator\ast\nodes\VariableNodes.h" />
+    <ClInclude Include="src\translator\ast\visitor\ASTVisitor.h" />
+    <ClInclude Include="src\translator\ast\visitor\BytecodeGeneratorVisitor.h" />
+    <ClInclude Include="src\translator\codegen\BytecodeBuilder.h" />
+    <ClInclude Include="src\translator\optimizer\ConstantFolding.h" />
+    <ClInclude Include="src\translator\Translator.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
@@ -123,6 +175,7 @@
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
       <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)src;$(SolutionDir)include</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

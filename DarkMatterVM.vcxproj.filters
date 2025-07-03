@@ -23,6 +23,48 @@
     <Filter Include="src\tanslator\assembler">
       <UniqueIdentifier>{14e3ba3b-f9b7-45f0-996e-a7f7d1f615d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\common">
+      <UniqueIdentifier>{1bc861d6-fe35-44e3-811c-f3df27eb072f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\controlflow">
+      <UniqueIdentifier>{6c5327da-8f2a-4e1c-bfb7-fded47190707}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\engine\decoder">
+      <UniqueIdentifier>{93b0507a-46f6-47b7-98aa-da61f02d7eaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\engine\executor">
+      <UniqueIdentifier>{43c5bc59-d465-4356-9f55-77734e3748b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\loader">
+      <UniqueIdentifier>{10a372a9-250f-413a-907c-7dddde5f47d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\loader\reader">
+      <UniqueIdentifier>{a016117f-62e3-4f79-b62e-8938b7e7c74a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\obfuscation">
+      <UniqueIdentifier>{f48070b0-5358-48da-a8e4-c793d95917ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\obfuscation\controlflow">
+      <UniqueIdentifier>{3691af31-cce6-4f1f-957c-aec8cd4939b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\tanslator\ast">
+      <UniqueIdentifier>{c68bdbed-46ec-45ee-bdd0-ee0019862d0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\tanslator\codegen">
+      <UniqueIdentifier>{726ca327-0347-4793-b8c5-45ffcd5ddcc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\tanslator\optimizer">
+      <UniqueIdentifier>{8f44ddf8-601c-4f34-b5a9-8ca666c3604b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\tanslator\ast\base">
+      <UniqueIdentifier>{d64a6813-1ae9-4122-acc7-32805be65029}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\tanslator\ast\nodes">
+      <UniqueIdentifier>{ee09ab21-f63d-4b73-b8a8-fa25f8f4f5a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\tanslator\ast\visitor">
+      <UniqueIdentifier>{57980f5e-ec30-4ce5-86f2-1b385904af3f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -46,6 +88,81 @@
     <ClCompile Include="src\translator\assembler\Parser.cpp">
       <Filter>src\tanslator\assembler</Filter>
     </ClCompile>
+    <ClCompile Include="src\memory\MemorySegment.cpp">
+      <Filter>src\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\memory\StackMemory.cpp">
+      <Filter>src\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\memory\HeapMemory.cpp">
+      <Filter>src\memory</Filter>
+    </ClCompile>
+    <ClCompile Include="src\common\Logger.cpp">
+      <Filter>src\common</Filter>
+    </ClCompile>
+    <ClCompile Include="src\controlflow\ControlFlowManager.cpp">
+      <Filter>src\controlflow</Filter>
+    </ClCompile>
+    <ClCompile Include="src\controlflow\FrameLayout.cpp">
+      <Filter>src\controlflow</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\decoder\BytecodeParser.cpp">
+      <Filter>src\engine\decoder</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\decoder\OpcodeDecoder.cpp">
+      <Filter>src\engine\decoder</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\executor\ArithmeticExec.cpp">
+      <Filter>src\engine\executor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\executor\FlowControlExec.cpp">
+      <Filter>src\engine\executor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\engine\executor\HostCallExec.cpp">
+      <Filter>src\engine\executor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\loader\Loader.cpp">
+      <Filter>src\loader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\loader\reader\BytecodeReader.cpp">
+      <Filter>src\loader\reader</Filter>
+    </ClCompile>
+    <ClCompile Include="src\obfuscation\ObfuscationUtils.cpp">
+      <Filter>src\obfuscation</Filter>
+    </ClCompile>
+    <ClCompile Include="src\obfuscation\controlflow\ControlFlowFlattener.cpp">
+      <Filter>src\obfuscation\controlflow</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\Translator.cpp">
+      <Filter>src\tanslator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\optimizer\ConstantFolding.cpp">
+      <Filter>src\tanslator\optimizer</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\codegen\BytecodeBuilder.cpp">
+      <Filter>src\tanslator\codegen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\ast\ASTNodeFactory.cpp">
+      <Filter>src\tanslator\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\ast\base\ASTNode.cpp">
+      <Filter>src\tanslator\ast\base</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\ast\nodes\ContainerNodes.cpp">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\ast\nodes\LiteralNodes.cpp">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\ast\nodes\OperatorNodes.cpp">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\ast\nodes\VariableNodes.cpp">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\ast\visitor\BytecodeGeneratorVisitor.cpp">
+      <Filter>src\tanslator\ast\visitor</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="include\Opcodes.h">
@@ -68,6 +185,87 @@
     </ClInclude>
     <ClInclude Include="src\translator\assembler\Assembler.h">
       <Filter>src\tanslator\assembler</Filter>
+    </ClInclude>
+    <ClInclude Include="src\memory\HeapMemory.h">
+      <Filter>src\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\memory\MemorySegment.h">
+      <Filter>src\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\memory\StackMemory.h">
+      <Filter>src\memory</Filter>
+    </ClInclude>
+    <ClInclude Include="src\common\Logger.h">
+      <Filter>src\common</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controlflow\ControlFlowManager.h">
+      <Filter>src\controlflow</Filter>
+    </ClInclude>
+    <ClInclude Include="src\controlflow\FrameLayout.h">
+      <Filter>src\controlflow</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\decoder\BytecodeParser.h">
+      <Filter>src\engine\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\decoder\OpcodeDecoder.h">
+      <Filter>src\engine\decoder</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\executor\ArithmeticExec.h">
+      <Filter>src\engine\executor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\executor\FlowControlExec.h">
+      <Filter>src\engine\executor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\executor\HostCallExec.h">
+      <Filter>src\engine\executor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\loader\Loader.h">
+      <Filter>src\loader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\loader\reader\BytecodeReader.h">
+      <Filter>src\loader\reader</Filter>
+    </ClInclude>
+    <ClInclude Include="src\obfuscation\ObfuscationUtils.h">
+      <Filter>src\obfuscation</Filter>
+    </ClInclude>
+    <ClInclude Include="src\obfuscation\controlflow\ControlFlowFlattener.h">
+      <Filter>src\obfuscation\controlflow</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\Translator.h">
+      <Filter>src\tanslator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\optimizer\ConstantFolding.h">
+      <Filter>src\tanslator\optimizer</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\codegen\BytecodeBuilder.h">
+      <Filter>src\tanslator\codegen</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\ASTNodeFactory.h">
+      <Filter>src\tanslator\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\base\ASTNode.h">
+      <Filter>src\tanslator\ast\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\base\OperatorTypes.h">
+      <Filter>src\tanslator\ast\base</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\nodes\ContainerNodes.h">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\nodes\LiteralNodes.h">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\nodes\OperatorNodes.h">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\nodes\VariableNodes.h">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\visitor\ASTVisitor.h">
+      <Filter>src\tanslator\ast\visitor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\visitor\BytecodeGeneratorVisitor.h">
+      <Filter>src\tanslator\ast\visitor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
