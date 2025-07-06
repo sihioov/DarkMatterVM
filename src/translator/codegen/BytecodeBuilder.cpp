@@ -6,6 +6,7 @@
 #include "../ast/nodes/LiteralNodes.h"
 #include "../ast/nodes/OperatorNodes.h"
 #include "../ast/nodes/VariableNodes.h"
+#include "../../common/Logger.h"
 
 namespace DarkMatterVM 
 {
@@ -22,22 +23,26 @@ bool BytecodeBuilder::GenerateFromAST(const ASTNode* rootNode)
 {
 	if (!rootNode) 
 	{
+		Logger::Error("BytecodeBuilder", "AST 루트 노드가 null입니다");
 		return false;
 	}
 	
 	// AST 처리 시작
 	try 
 	{
+		Logger::Info("BytecodeBuilder", "AST 노드 처리 시작");
 		ProcessNode(rootNode);
 		
+		Logger::Info("BytecodeBuilder", "프로그램 종료 명령어 추가");
 		// 프로그램 종료 명령어 추가
 		EmitOpcode(Engine::Opcode::HALT);
 		
+		Logger::Info("BytecodeBuilder", "바이트코드 생성 완료");
 		return true;
 	} 
 	catch (const std::exception& e) 
 	{
-		std::cerr << "바이트코드 생성 중 오류 발생: " << e.what() << std::endl;
+		Logger::Error("BytecodeBuilder", "바이트코드 생성 중 오류 발생: " + std::string(e.what()));
 		
 		return false;
 	}
@@ -126,6 +131,9 @@ void BytecodeBuilder::EmitInt64(int64_t value)
 
 void BytecodeBuilder::EmitOpcode(Engine::Opcode opcode) 
 {
+	const auto& opcodeInfo = Engine::GetOpcodeInfo(opcode);
+	Logger::Info("BytecodeBuilder", "    명령어 생성: " + std::string(opcodeInfo.mnemonic) + " (0x" + 
+	             std::to_string(static_cast<int>(opcode)) + ")");
 	EmitByte(static_cast<uint8_t>(opcode));
 }
 
@@ -134,12 +142,14 @@ void BytecodeBuilder::ProcessNode(const ASTNode* node)
 {
 	if (!node)
 	{
+		Logger::Warning("BytecodeBuilder", "null 노드 처리 건너뜀");
 		return;
 	}
 	
 	switch (node->GetType()) 
 	{
 		case NodeType::Block:
+			Logger::Info("BytecodeBuilder", "블록 노드 처리");
 			ProcessBlock(dynamic_cast<const BlockNode*>(node));
 			break;
 			
@@ -160,6 +170,7 @@ void BytecodeBuilder::ProcessNode(const ASTNode* node)
 			break;
 			
 		default:
+			Logger::Error("BytecodeBuilder", "지원하지 않는 AST 노드 타입: " + std::to_string(static_cast<int>(node->GetType())));
 			throw std::runtime_error("지원하지 않는 AST 노드 타입: " + std::to_string(static_cast<int>(node->GetType())));
 	}
 }
@@ -167,34 +178,42 @@ void BytecodeBuilder::ProcessNode(const ASTNode* node)
 void BytecodeBuilder::ProcessBlock(const BlockNode* node) 
 {
 	// 블록 내의 모든 문장을 순차적으로 처리
-	for (const auto& stmt : node->GetStatements()) 
+	Logger::Info("BytecodeBuilder", "  블록 내 " + std::to_string(node->GetStatements().size()) + "개 문장 처리 시작");
+	for (size_t i = 0; i < node->GetStatements().size(); ++i) 
 	{
-		ProcessNode(stmt.get());
+		Logger::Info("BytecodeBuilder", "  문장 " + std::to_string(i + 1) + "/" + std::to_string(node->GetStatements().size()) + " 처리");
+		ProcessNode(node->GetStatements()[i].get());
 	}
+	Logger::Info("BytecodeBuilder", "  블록 처리 완료");
 }
 
 void BytecodeBuilder::ProcessIntegerLiteral(const IntegerLiteralNode* node) 
 {
 	int64_t value = node->GetValue();
+	Logger::Info("BytecodeBuilder", "  정수 리터럴 처리: " + std::to_string(value));
 	
 	// 값의 크기에 따라 적절한 PUSH 명령어 선택
 	if (value >= 0 && value <= 255) 
 	{
+		Logger::Info("BytecodeBuilder", "    8비트 값으로 처리");
 		EmitOpcode(Engine::Opcode::PUSH8);
 		EmitByte(static_cast<uint8_t>(value));
 	} 
 	else if (value >= -32768 && value <= 32767) 
 	{
+		Logger::Info("BytecodeBuilder", "    16비트 값으로 처리");
 		EmitOpcode(Engine::Opcode::PUSH16);
 		EmitInt16(static_cast<int16_t>(value));
 	} 
 	else if (value >= -2147483648LL && value <= 2147483647LL) 
 	{
+		Logger::Info("BytecodeBuilder", "    32비트 값으로 처리");
 		EmitOpcode(Engine::Opcode::PUSH32);
 		EmitInt32(static_cast<int32_t>(value));
 	} 
 	else 
 	{
+		Logger::Info("BytecodeBuilder", "    64비트 값으로 처리");
 		EmitOpcode(Engine::Opcode::PUSH64);
 		EmitInt64(value);
 	}
@@ -204,9 +223,11 @@ void BytecodeBuilder::ProcessVariable(const VariableNode* node)
 {
 	// 변수 참조 처리
 	const std::string& name = node->GetName();
+	Logger::Info("BytecodeBuilder", "  변수 참조 처리: " + name);
 	
 	// 심볼 테이블에서 변수 주소 찾기
 	size_t address = GetVariableAddress(name);
+	Logger::Info("BytecodeBuilder", "    변수 주소: 0x" + std::to_string(address));
 	
 	// 변수 주소를 스택에 푸시
 	EmitOpcode(Engine::Opcode::PUSH64);
@@ -221,16 +242,21 @@ void BytecodeBuilder::ProcessVariableDecl(const VariableDeclNode* node)
 	// 변수 선언 처리
 	const std::string& name = node->GetName();
 	const std::string& type = node->GetType();
+	Logger::Info("BytecodeBuilder", "  변수 선언 처리: " + type + " " + name);
 	
 	// 변수를 심볼 테이블에 등록
 	RegisterVariable(name, type);
+	Logger::Info("BytecodeBuilder", "    변수 등록 완료: 주소 0x" + std::to_string(_symbolTable[name].address));
 	
 	// 초기화 값이 있으면 처리
 	if (const ASTNode* initializer = node->GetInitializer()) 
 	{
+		Logger::Info("BytecodeBuilder", "    초기화 값 처리 시작");
+		
 		// 초기값 계산하여 스택에 푸시
 		ProcessNode(initializer);
 		
+		Logger::Info("BytecodeBuilder", "    변수에 값 저장");
 		// 변수 주소를 스택에 푸시
 		EmitOpcode(Engine::Opcode::PUSH64);
 		EmitInt64(static_cast<int64_t>(_symbolTable[name].address));
@@ -243,13 +269,27 @@ void BytecodeBuilder::ProcessVariableDecl(const VariableDeclNode* node)
 void BytecodeBuilder::ProcessBinaryOp(const BinaryOpNode* node) 
 {
 	// 이항 연산자 처리
+	std::string opName;
+	switch (node->GetOpType()) 
+	{
+		case BinaryOpType::Add:      opName = "+"; break;
+		case BinaryOpType::Subtract: opName = "-"; break;
+		case BinaryOpType::Multiply: opName = "*"; break;
+		case BinaryOpType::Divide:   opName = "/"; break;
+		case BinaryOpType::Modulo:   opName = "%"; break;
+		default:                     opName = "unknown"; break;
+	}
+	Logger::Info("BytecodeBuilder", "  이항 연산 처리: " + opName);
 	
+	Logger::Info("BytecodeBuilder", "    왼쪽 피연산자 처리");
 	// 왼쪽 피연산자 처리 (결과는 스택에 푸시됨)
 	ProcessNode(node->GetLeft());
 	
+	Logger::Info("BytecodeBuilder", "    오른쪽 피연산자 처리");
 	// 오른쪽 피연산자 처리 (결과는 스택에 푸시됨)
 	ProcessNode(node->GetRight());
 	
+	Logger::Info("BytecodeBuilder", "    연산자 명령어 생성");
 	// 연산자에 따른 명령어 추가
 	switch (node->GetOpType()) 
 	{
