@@ -89,68 +89,73 @@ struct OpcodeInfo {
  * @param op 정보를 조회할 명령어
  * @return 해당 명령어에 대한 OpcodeInfo 구조체
  */
-inline const OpcodeInfo& GetOpcodeInfo(Opcode op) {
-    static const OpcodeInfo opcodeInfoTable[] = {
+inline const OpcodeInfo& GetOpcodeInfo(Opcode op) 
+{
+    static const OpcodeInfo invalidOpcode = {0, false, "INVALID"};
+    
+    switch (op) 
+    {
         // Stack Operations
-        {1, false, "PUSH8"},    // PUSH8
-        {2, false, "PUSH16"},   // PUSH16
-        {4, false, "PUSH32"},   // PUSH32
-        {8, false, "PUSH64"},   // PUSH64
-        {0, false, "POP"},      // POP
-        {0, false, "DUP"},      // DUP
-        {0, false, "SWAP"},     // SWAP
+        case Opcode::PUSH8:     return {1, false, "PUSH8"};
+        case Opcode::PUSH16:    return {2, false, "PUSH16"};
+        case Opcode::PUSH32:    return {4, false, "PUSH32"};
+        case Opcode::PUSH64:    return {8, false, "PUSH64"};
+        case Opcode::POP:       return {0, false, "POP"};
+        case Opcode::DUP:       return {0, false, "DUP"};
+        case Opcode::SWAP:      return {0, false, "SWAP"};
         
         // Arithmetic Operations
-        {0, false, "ADD"},      // ADD
-        {0, false, "SUB"},      // SUB
-        {0, false, "MUL"},      // MUL
-        {0, false, "DIV"},      // DIV
-        {0, false, "MOD"},      // MOD
+        case Opcode::ADD:       return {0, false, "ADD"};
+        case Opcode::SUB:       return {0, false, "SUB"};
+        case Opcode::MUL:       return {0, false, "MUL"};
+        case Opcode::DIV:       return {0, false, "DIV"};
+        case Opcode::MOD:       return {0, false, "MOD"};
         
         // Bitwise Operations
-        {0, false, "AND"},      // AND
-        {0, false, "OR"},       // OR
-        {0, false, "XOR"},      // XOR
-        {0, false, "NOT"},      // NOT
-        {0, false, "SHL"},      // SHL
-        {0, false, "SHR"},      // SHR
+        case Opcode::AND:       return {0, false, "AND"};
+        case Opcode::OR:        return {0, false, "OR"};
+        case Opcode::XOR:       return {0, false, "XOR"};
+        case Opcode::NOT:       return {0, false, "NOT"};
+        case Opcode::SHL:       return {0, false, "SHL"};
+        case Opcode::SHR:       return {0, false, "SHR"};
         
         // Memory Operations
-        {0, false, "LOAD8"},    // LOAD8
-        {0, false, "LOAD16"},   // LOAD16
-        {0, false, "LOAD32"},   // LOAD32
-        {0, false, "LOAD64"},   // LOAD64
-        {0, false, "STORE8"},   // STORE8
-        {0, false, "STORE16"},  // STORE16
-        {0, false, "STORE32"},  // STORE32
-        {0, false, "STORE64"},  // STORE64
+        case Opcode::LOAD8:     return {0, false, "LOAD8"};
+        case Opcode::LOAD16:    return {0, false, "LOAD16"};
+        case Opcode::LOAD32:    return {0, false, "LOAD32"};
+        case Opcode::LOAD64:    return {0, false, "LOAD64"};
+        case Opcode::STORE8:    return {0, false, "STORE8"};
+        case Opcode::STORE16:   return {0, false, "STORE16"};
+        case Opcode::STORE32:   return {0, false, "STORE32"};
+        case Opcode::STORE64:   return {0, false, "STORE64"};
         
         // Control Flow Operations
-        {2, true, "JMP"},       // JMP
-        {2, true, "JZ"},        // JZ
-        {2, true, "JNZ"},       // JNZ
-        {2, true, "JG"},        // JG
-        {2, true, "JL"},        // JL
-        {2, true, "JGE"},       // JGE
-        {2, true, "JLE"},       // JLE
+        case Opcode::JMP:       return {2, true, "JMP"};
+        case Opcode::JZ:        return {2, true, "JZ"};
+        case Opcode::JNZ:       return {2, true, "JNZ"};
+        case Opcode::JG:        return {2, true, "JG"};
+        case Opcode::JL:        return {2, true, "JL"};
+        case Opcode::JGE:       return {2, true, "JGE"};
+        case Opcode::JLE:       return {2, true, "JLE"};
         
         // Function Operations
-        {2, true, "CALL"},      // CALL
-        {0, true, "RET"},       // RET
+        case Opcode::CALL:      return {0, true, "CALL"};     // 스택에서 주소 가져옴
+        case Opcode::RET:       return {0, true, "RET"};
         
         // Memory Allocation
-        {4, false, "ALLOC"},    // ALLOC
-        {0, false, "FREE"},     // FREE
+        case Opcode::ALLOC:     return {0, false, "ALLOC"};   // 스택에서 크기 가져옴
+        case Opcode::FREE:      return {0, false, "FREE"};
         
         // Host Interface
-        {4, false, "HOSTCALL"}, // HOSTCALL
-        {0, false, "THREAD"},   // THREAD
+        case Opcode::HOSTCALL:  return {1, false, "HOSTCALL"}; // 1바이트 함수 ID
+        case Opcode::THREAD:    return {0, false, "THREAD"};
         
         // System
-        {0, true, "HALT"},      // HALT
-    };
-    
-    return opcodeInfoTable[static_cast<uint8_t>(op) - 1];
+        case Opcode::HALT:      return {0, true, "HALT"};
+        
+        default:
+            return invalidOpcode;
+    }
 }
 
 } // namespace Engine

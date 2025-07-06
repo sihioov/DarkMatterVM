@@ -641,7 +641,7 @@ void Interpreter::_Handle_JLE()
 
 void Interpreter::_Handle_CALL()
 {
-    // 호출할 함수 주소 가져오기
+    // 호출할 함수 주소를 스택에서 가져오기 (동적 함수 호출 지원)
     uint64_t targetAddress = _memory->PopStack();
     
     // 현재 명령어 포인터를 스택에 저장 (반환 주소)
@@ -683,7 +683,7 @@ void Interpreter::_Handle_FREE()
 
 void Interpreter::_Handle_HOSTCALL()
 {
-    // 호스트 함수 ID를 가져옴
+    // 호스트 함수 ID를 1바이트로 가져옴
     uint8_t functionId = _FetchByte();
     
     // 현재는 구현이 간단하므로 기본적인 호스트 함수만 지원
@@ -724,8 +724,7 @@ void Interpreter::_Handle_THREAD()
     std::cerr << "  파라미터: 0x" << std::hex << threadParam << std::dec << std::endl;
     
     // 스레드 ID를 스택에 넣음 (현재는 항상 0)
-    //_memory->PopStack(0);
-    _memory->PopStack();
+    _memory->PushStack(0);
 }
 
 } // namespace Engine
