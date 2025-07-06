@@ -1,5 +1,6 @@
 #include <iostream>
 #include "engine/Interpreter.h"
+#include "translator/Translator.h"
 
 void RunSimpleAdditionExample()
 {
@@ -84,6 +85,52 @@ void RunMemoryExample()
 	}
 }
 
+void RunCppParserExample()
+{
+	std::cout << "\n=== C++ 파서 테스트 시작 ===" << std::endl;
+	
+	// Translator 생성
+	DarkMatterVM::Translator::Translator translator;
+	
+	// 테스트할 C++ 코드
+	std::string cppCode = R"(
+		int x = 42;
+		int y = 13;
+		int sum = x + y;
+	)";
+	
+	std::cout << "변환할 C++ 코드:" << std::endl;
+	std::cout << cppCode << std::endl;
+	
+	// C++ 코드를 바이트코드로 변환
+	auto result = translator.TranslateFromCpp(cppCode, "test_module");
+	
+	if (result == DarkMatterVM::Translator::TranslationResult::Success) 
+	{
+		std::cout << "✅ C++ 파싱 및 변환 성공!" << std::endl;
+		
+		// 생성된 바이트코드 정보 출력
+		const auto& bytecode = translator.GetBytecode();
+		std::cout << "생성된 바이트코드 크기: " << bytecode.size() << " 바이트" << std::endl;
+		
+		// 바이트코드 덤프 출력
+		std::cout << "\n생성된 바이트코드:" << std::endl;
+		std::cout << translator.DumpBytecode() << std::endl;
+		
+		// 생성된 바이트코드를 VM에서 실행 테스트
+		std::cout << "\n=== 생성된 바이트코드 실행 테스트 ===" << std::endl;
+		DarkMatterVM::Engine::Interpreter interpreter;
+		interpreter.LoadBytecode(bytecode.data(), bytecode.size());
+		interpreter.Execute();
+		
+		std::cout << "VM 실행 완료!" << std::endl;
+	} 
+	else 
+	{
+		std::cout << "❌ C++ 파싱 실패: " << translator.GetLastError() << std::endl;
+	}
+}
+
 int main()
 {
 	// 간단한 덧셈 예제 실행
@@ -91,6 +138,9 @@ int main()
 	
 	// 메모리 예제 실행
 	RunMemoryExample();
+	
+	// C++ 파서 테스트 실행
+	RunCppParserExample();
 
 	return 0;
 }
