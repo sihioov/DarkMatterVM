@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <string>
 #include <memory>
+#include <common/Logger.h>
 
 namespace DarkMatterVM::Memory 
 {
@@ -175,7 +176,30 @@ public:
      */
     bool HasAccess(MemoryAccessFlags flag) const 
     {
-        return (_accessFlags & static_cast<uint8_t>(flag)) != 0;
+        bool result = (_accessFlags & static_cast<uint8_t>(flag)) != 0;
+        
+        // 디버깅 로그 추가
+        std::string flagName;
+        switch(flag) {
+            case MemoryAccessFlags::READ: flagName = "READ"; break;
+            case MemoryAccessFlags::WRITE: flagName = "WRITE"; break;
+            case MemoryAccessFlags::EXECUTE: flagName = "EXECUTE"; break;
+            default: flagName = "UNKNOWN"; break;
+        }
+        
+        std::string typeName;
+        switch(_type) {
+            case MemorySegmentType::CODE: typeName = "CODE"; break;
+            case MemorySegmentType::STACK: typeName = "STACK"; break;
+            case MemorySegmentType::HEAP: typeName = "HEAP"; break;
+            case MemorySegmentType::CONSTANT: typeName = "CONSTANT"; break;
+            default: typeName = "UNKNOWN"; break;
+        }
+        
+        Logger::Debug("MemorySegment", "세그먼트=" + typeName + ", 권한체크=" + flagName + 
+                     ", 현재권한=" + std::to_string(_accessFlags) + ", 결과=" + (result ? "허용" : "거부"));
+        
+        return result;
     }
     
     /**

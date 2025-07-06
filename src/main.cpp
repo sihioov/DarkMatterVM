@@ -1,6 +1,13 @@
 #include <iostream>
 #include "engine/Interpreter.h"
 #include "translator/Translator.h"
+#include <common/Logger.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#include <io.h>
+#include <fcntl.h>
+#endif
 
 void RunSimpleAdditionExample()
 {
@@ -133,6 +140,17 @@ void RunCppParserExample()
 
 int main()
 {
+	// Windows 콘솔에서 UTF-8 한글 표시를 위한 설정
+#ifdef _WIN32
+	SetConsoleOutputCP(CP_UTF8);
+	SetConsoleCP(CP_UTF8);
+#endif
+	
+	// Logger 초기화 - DEBUG 레벨로 설정하여 모든 로그 출력
+	DarkMatterVM::Logger::Initialize(DarkMatterVM::LogLevel::DEBUG, true);
+	
+	std::cout << "=== DarkMatterVM 테스트 시작 ===" << std::endl;
+	
 	// 간단한 덧셈 예제 실행
 	RunSimpleAdditionExample();
 	
@@ -141,6 +159,9 @@ int main()
 	
 	// C++ 파서 테스트 실행
 	RunCppParserExample();
+
+	// Logger 정리
+	DarkMatterVM::Logger::Cleanup();
 
 	return 0;
 }

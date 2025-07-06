@@ -396,6 +396,11 @@ std::string Translator::DumpBytecode() const
     return ss.str();
 }
 
+const std::unordered_map<std::string, SymbolInfo>& Translator::GetSymbolTable() const
+{
+    return _symbolTable;
+}
+
 bool Translator::_GenerateBytecode(const ASTNode* rootNode)
 {
     if (!rootNode)
@@ -415,6 +420,9 @@ bool Translator::_GenerateBytecode(const ASTNode* rootNode)
     
     // 생성된 바이트코드 저장
     _bytecode = builder.GetBytecode();
+    
+    // 심볼 테이블 저장
+    _symbolTable = builder.GetSymbolTable();
     
     Logger::Info("Translator", "바이트코드 생성 완료: " + std::to_string(_bytecode.size()) + " 바이트");
     

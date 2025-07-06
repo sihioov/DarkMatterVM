@@ -4,8 +4,11 @@
 #include <vector>
 #include <memory>
 #include <cstdint>
+#include <map>
+#include <unordered_map>
 #include <common/Logger.h>
 #include "ast/base/ASTNode.h"
+#include "codegen/BytecodeBuilder.h"
 
 namespace DarkMatterVM 
 {
@@ -94,11 +97,19 @@ public:
      */
     std::string DumpBytecode() const;
     
+    /**
+     * @brief 심볼 테이블 가져오기 (디버깅용)
+     * 
+     * @return const std::unordered_map<std::string, SymbolInfo>& 심볼 테이블
+     */
+    const std::unordered_map<std::string, SymbolInfo>& GetSymbolTable() const;
+    
 private:
     int _options;                     ///< 변환 옵션
     std::vector<uint8_t> _bytecode;   ///< 생성된 바이트코드
     std::string _lastError;           ///< 마지막 오류 메시지
     std::string _moduleName;          ///< 현재 모듈 이름
+    std::unordered_map<std::string, SymbolInfo> _symbolTable;  ///< 심볼 테이블
     
     /**
      * @brief AST로부터 바이트코드 생성

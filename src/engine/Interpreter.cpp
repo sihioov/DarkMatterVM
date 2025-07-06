@@ -2,6 +2,7 @@
 #include <iostream>
 #include <iomanip>
 #include <sstream>
+#include <common/Logger.h>
 
 namespace DarkMatterVM {
 namespace Engine {
@@ -520,9 +521,12 @@ void Interpreter::_Handle_LOAD64()
     // 주소를 스택에서 가져옴
     uint64_t address = _memory->PopStack();
     
-    // 힙 메모리에서 8바이트 읽기
-    auto& heapSegment = _memory->GetSegment(Memory::MemorySegmentType::HEAP);
-    uint64_t value = heapSegment.ReadUInt64(static_cast<size_t>(address));
+    Logger::Info("Interpreter", "LOAD64: 주소 0x" + std::to_string(address) + "에서 8바이트 읽기 시도");
+    
+    // 주소에 맞는 세그먼트에서 8바이트 읽기
+    uint64_t value = _memory->ReadUInt64(static_cast<size_t>(address));
+    
+    Logger::Info("Interpreter", "LOAD64: 읽은 값 = " + std::to_string(value));
     
     // 결과를 스택에 푸시
     _memory->PushStack(value);
@@ -562,9 +566,12 @@ void Interpreter::_Handle_STORE64()
     // 주소를 스택에서 가져옴
     uint64_t address = _memory->PopStack();
     
-    // 힙 메모리에 8바이트 쓰기
-    auto& heapSegment = _memory->GetSegment(Memory::MemorySegmentType::HEAP);
-    heapSegment.WriteUInt64(static_cast<size_t>(address), value);
+    Logger::Info("Interpreter", "STORE64: 주소 0x" + std::to_string(address) + "에 값 " + std::to_string(value) + " 쓰기 시도");
+    
+    // 주소에 맞는 세그먼트에 8바이트 쓰기
+    _memory->WriteUInt64(static_cast<size_t>(address), value);
+    
+    Logger::Info("Interpreter", "STORE64: 쓰기 완료");
 }
 
 void Interpreter::_Handle_JG()

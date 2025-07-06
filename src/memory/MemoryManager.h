@@ -193,6 +193,38 @@ public:
     void WriteHeap(size_t address, const void* data, size_t size);
     
     /**
+     * @brief 주소를 기반으로 적절한 세그먼트 찾기
+     * 
+     * @param address 메모리 주소
+     * @return MemorySegment& 해당 세그먼트 참조
+     */
+    MemorySegment& GetSegmentByAddress(size_t address);
+    
+    /**
+     * @brief 주소를 기반으로 적절한 세그먼트 찾기 (읽기 전용)
+     * 
+     * @param address 메모리 주소
+     * @return const MemorySegment& 해당 세그먼트 참조
+     */
+    const MemorySegment& GetSegmentByAddress(size_t address) const;
+    
+    /**
+     * @brief 주소에서 64비트 값 읽기
+     * 
+     * @param address 메모리 주소
+     * @return uint64_t 읽은 값
+     */
+    uint64_t ReadUInt64(size_t address) const;
+    
+    /**
+     * @brief 주소에 64비트 값 쓰기
+     * 
+     * @param address 메모리 주소
+     * @param value 쓸 값
+     */
+    void WriteUInt64(size_t address, uint64_t value);
+    
+    /**
      * @brief 특정 세그먼트 조회
      * 
      * @param t 세그먼트 유형

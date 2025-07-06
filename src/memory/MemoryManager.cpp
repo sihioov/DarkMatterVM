@@ -1,6 +1,7 @@
 #include "MemoryManager.h"
 #include "StackMemory.h"
 #include "HeapMemory.h"
+#include <common/Logger.h>
 #include <cstring>
 #include <algorithm>
 #include <stdexcept>
@@ -160,6 +161,56 @@ uint8_t MemoryManager::ReadByte(size_t address) const
 }
 
 // 주소 해석
+MemorySegment& MemoryManager::GetSegmentByAddress(size_t address)
+{
+    auto [segmentType, offset] = _ResolveAddress(address);
+    return GetSegment(segmentType);
+}
+
+const MemorySegment& MemoryManager::GetSegmentByAddress(size_t address) const
+{
+    auto [segmentType, offset] = _ResolveAddress(address);
+    return GetSegment(segmentType);
+}
+
+uint64_t MemoryManager::ReadUInt64(size_t address) const
+{
+    Logger::Debug("MemoryManager", "ReadUInt64 호출 - 주소=0x" + std::to_string(address));
+    auto [segmentType, offset] = _ResolveAddress(address);
+    
+    std::string segTypeName;
+    switch(segmentType) {
+        case MemorySegmentType::CODE: segTypeName = "CODE"; break;
+        case MemorySegmentType::STACK: segTypeName = "STACK"; break;
+        case MemorySegmentType::HEAP: segTypeName = "HEAP"; break;
+        case MemorySegmentType::CONSTANT: segTypeName = "CONSTANT"; break;
+        default: segTypeName = "UNKNOWN"; break;
+    }
+    
+    Logger::Debug("MemoryManager", "주소 변환 결과 - 세그먼트=" + segTypeName + ", 오프셋=0x" + std::to_string(offset));
+    
+    return GetSegment(segmentType).ReadUInt64(offset);
+}
+
+void MemoryManager::WriteUInt64(size_t address, uint64_t value)
+{
+    Logger::Debug("MemoryManager", "WriteUInt64 호출 - 주소=0x" + std::to_string(address) + ", 값=" + std::to_string(value));
+    auto [segmentType, offset] = _ResolveAddress(address);
+    
+    std::string segTypeName;
+    switch(segmentType) {
+        case MemorySegmentType::CODE: segTypeName = "CODE"; break;
+        case MemorySegmentType::STACK: segTypeName = "STACK"; break;
+        case MemorySegmentType::HEAP: segTypeName = "HEAP"; break;
+        case MemorySegmentType::CONSTANT: segTypeName = "CONSTANT"; break;
+        default: segTypeName = "UNKNOWN"; break;
+    }
+    
+    Logger::Debug("MemoryManager", "주소 변환 결과 - 세그먼트=" + segTypeName + ", 오프셋=0x" + std::to_string(offset));
+    
+    GetSegment(segmentType).WriteUInt64(offset, value);
+}
+
 std::pair<MemorySegmentType, size_t> MemoryManager::_ResolveAddress(size_t address) const 
 {
     // 주소 범위에 따라 세그먼트 유형과 오프셋 결정

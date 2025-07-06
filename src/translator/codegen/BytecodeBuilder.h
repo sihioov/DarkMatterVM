@@ -87,6 +87,12 @@ public:
 	 */
 	std::string DumpBytecode() const;
 	
+	/**
+	 * @brief 심볼 테이블 가져오기 (디버깅용)
+	 * @return 심볼 테이블
+	 */
+	const std::unordered_map<std::string, SymbolInfo>& GetSymbolTable() const { return _symbolTable; }
+	
 private:
 	// 바이트코드 저장
 	std::vector<uint8_t> _bytecode;

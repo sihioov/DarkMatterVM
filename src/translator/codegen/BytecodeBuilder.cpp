@@ -6,7 +6,7 @@
 #include "../ast/nodes/LiteralNodes.h"
 #include "../ast/nodes/OperatorNodes.h"
 #include "../ast/nodes/VariableNodes.h"
-#include "../../common/Logger.h"
+#include <common/Logger.h>
 
 namespace DarkMatterVM 
 {
@@ -14,7 +14,7 @@ namespace Translator
 {
 
 BytecodeBuilder::BytecodeBuilder() 
-	: _currentAddress(0) 
+	: _currentAddress(0x200000) // 힙 세그먼트 시작 주소 (2MB)
 {
 	Reset();
 }
@@ -52,7 +52,7 @@ void BytecodeBuilder::Reset()
 {
 	_bytecode.clear();
 	_symbolTable.clear();
-	_currentAddress = 0;
+	_currentAddress = 0x200000; // 힙 세그먼트 시작 주소 (2MB)
 }
 
 std::string BytecodeBuilder::DumpBytecode() const 
@@ -347,6 +347,8 @@ void BytecodeBuilder::RegisterVariable(const std::string& name, const std::strin
 	{
 		throw std::runtime_error("변수 '" + name + "' 이미 선언됨");
 	}
+	
+	Logger::Debug("BytecodeBuilder", "변수 등록 - 이름=" + name + ", 타입=" + type + ", 주소=0x" + std::to_string(_currentAddress));
 	
 	// 새 변수 등록 (8바이트 공간 할당 - int64_t 기준)
 	_symbolTable.emplace(name, SymbolInfo(name, type, _currentAddress));
