@@ -3,6 +3,8 @@
 #include "translator/Translator.h"
 #include <common/Logger.h>
 #include <locale.h>
+#include "tests/engine/TestEngine.h"
+#include "tests/translator/TestTranslator.h"
 
 #ifdef _WIN32
 #include <windows.h>
@@ -115,7 +117,7 @@ void RunCppParserExample()
 	
 	if (result == DarkMatterVM::Translator::TranslationResult::Success) 
 	{
-		std::cout << "✅ C++ 파싱 및 변환 성공!" << std::endl;
+		std::cout << "C++ 파싱 및 변환 성공!" << std::endl;
 		
 		// 생성된 바이트코드 정보 출력
 		const auto& bytecode = translator.GetBytecode();
@@ -135,7 +137,41 @@ void RunCppParserExample()
 	} 
 	else 
 	{
-		std::cout << "❌ C++ 파싱 실패: " << translator.GetLastError() << std::endl;
+		std::cout << "C++ 파싱 실패: " << translator.GetLastError() << std::endl;
+	}
+}
+
+void RunEngineTests()
+{
+	std::cout << "\n=== Engine 체계적 테스트 시작 ===" << std::endl;
+	
+	DarkMatterVM::Tests::TestEngine testEngine;
+	bool allPassed = testEngine.RunAllTests();
+	
+	if (allPassed) 
+	{
+		std::cout << "모든 Engine 테스트 통과!" << std::endl;
+	} 
+	else 
+	{
+		std::cout << "일부 Engine 테스트 실패" << std::endl;
+	}
+}
+
+void RunTranslatorTests()
+{
+	std::cout << "\n=== Translator 체계적 테스트 시작 ===" << std::endl;
+	
+	DarkMatterVM::Tests::TestTranslator testTranslator;
+	bool allPassed = testTranslator.RunAllTests();
+	
+	if (allPassed) 
+	{
+		std::cout << "모든 Translator 테스트 통과!" << std::endl;
+	} 
+	else 
+	{
+		std::cout << "일부 Translator 테스트 실패" << std::endl;
 	}
 }
 
@@ -158,11 +194,17 @@ int main()
 	// 간단한 덧셈 예제 실행
 	RunSimpleAdditionExample();
 	
-	// 메모리 예제 실행
+	// Memory TEST
 	RunMemoryExample();
 	
-	// C++ 파서 테스트 실행
+	// C++ Parser TEST
 	RunCppParserExample();
+	
+	// Engine TEST
+	RunEngineTests();
+	
+	// Translator TEST
+	RunTranslatorTests();
 
 	// Logger 정리
 	DarkMatterVM::Logger::Cleanup();

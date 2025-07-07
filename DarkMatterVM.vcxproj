@@ -37,6 +37,8 @@
     <ClCompile Include="src\memory\StackMemory.cpp" />
     <ClCompile Include="src\obfuscation\controlflow\ControlFlowFlattener.cpp" />
     <ClCompile Include="src\obfuscation\ObfuscationUtils.cpp" />
+    <ClCompile Include="src\tests\engine\TestEngine.cpp" />
+    <ClCompile Include="src\tests\translator\TestTranslator.cpp" />
     <ClCompile Include="src\translator\assembler\Assembler.cpp" />
     <ClCompile Include="src\translator\assembler\CodeEmitter.cpp" />
     <ClCompile Include="src\translator\assembler\Parser.cpp" />
@@ -71,6 +73,8 @@
     <ClInclude Include="src\memory\StackMemory.h" />
     <ClInclude Include="src\obfuscation\controlflow\ControlFlowFlattener.h" />
     <ClInclude Include="src\obfuscation\ObfuscationUtils.h" />
+    <ClInclude Include="src\tests\engine\TestEngine.h" />
+    <ClInclude Include="src\tests\translator\TestTranslator.h" />
     <ClInclude Include="src\translator\assembler\Assembler.h" />
     <ClInclude Include="src\translator\assembler\CodeEmitter.h" />
     <ClInclude Include="src\translator\assembler\Parser.h" />

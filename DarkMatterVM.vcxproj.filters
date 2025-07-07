@@ -65,6 +65,15 @@
     <Filter Include="src\tanslator\ast\visitor">
       <UniqueIdentifier>{57980f5e-ec30-4ce5-86f2-1b385904af3f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="src\tests">
+      <UniqueIdentifier>{bcf73196-e6d8-45de-b837-9950573dd5f4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\tests\engine">
+      <UniqueIdentifier>{90fcd072-d588-4c3b-acbd-c74fa1f517d2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="src\tests\translator">
+      <UniqueIdentifier>{d4de67dd-7a75-4896-a15f-293bd46da58a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -162,6 +171,12 @@
     </ClCompile>
     <ClCompile Include="src\translator\ast\visitor\BytecodeGeneratorVisitor.cpp">
       <Filter>src\tanslator\ast\visitor</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tests\translator\TestTranslator.cpp">
+      <Filter>src\tests\translator</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tests\engine\TestEngine.cpp">
+      <Filter>src\tests\engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -266,6 +281,12 @@
     </ClInclude>
     <ClInclude Include="src\translator\ast\visitor\BytecodeGeneratorVisitor.h">
       <Filter>src\tanslator\ast\visitor</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tests\translator\TestTranslator.h">
+      <Filter>src\tests\translator</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tests\engine\TestEngine.h">
+      <Filter>src\tests\engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
