@@ -1,4 +1,4 @@
-#include "Logger.h"
+﻿#include "Logger.h"
 #include <chrono>
 #include <iomanip>
 #include <sstream>

@@ -1,7 +1,8 @@
-#include <iostream>
+﻿#include <iostream>
 #include "engine/Interpreter.h"
 #include "translator/Translator.h"
 #include <common/Logger.h>
+#include <locale.h>
 
 #ifdef _WIN32
 #include <windows.h>
@@ -145,6 +146,9 @@ int main()
 	SetConsoleOutputCP(CP_UTF8);
 	SetConsoleCP(CP_UTF8);
 #endif
+	
+	// 전역 로케일을 UTF-8로 설정
+	setlocale(LC_ALL, "UTF-8");
 	
 	// Logger 초기화 - DEBUG 레벨로 설정하여 모든 로그 출력
 	DarkMatterVM::Logger::Initialize(DarkMatterVM::LogLevel::DEBUG, true);
