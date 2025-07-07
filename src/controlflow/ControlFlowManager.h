@@ -46,7 +46,7 @@ public:
     size_t GetBasePointer() const { return _currentBP; }
 
 private:
-    Memory::MemoryManager& _memory;
+    Memory::MemoryManager& _memoryManager;
     size_t                 _currentBP = 0;
 };
 

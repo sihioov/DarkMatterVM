@@ -4,7 +4,7 @@
 namespace DarkMatterVM::ControlFlow {
 
 ControlFlowManager::ControlFlowManager(Memory::MemoryManager& mem)
-    : _memory(mem)
+    : _memoryManager(mem)
     , _currentBP(0)
 {}
 
@@ -38,9 +38,9 @@ void ControlFlowManager::Call(size_t& ip, int16_t rel)
     // CALL 다음 명령 위치를 리턴 주소로 저장
     size_t returnIP = ip;
     // 스택 프레임: [returnIP] → [oldBP]
-    _memory.EnterStackFrame(_currentBP, returnIP);
+    _memoryManager.EnterStackFrame(_currentBP, returnIP);
     // 새 BP는 스택 포인터 위치
-    _currentBP = _memory.GetStackPointer();
+    _currentBP = _memoryManager.GetStackPointer();
     // IP를 호출 대상 블록으로 이동
     ip = static_cast<size_t>(returnIP + rel);
 }
@@ -49,7 +49,7 @@ void ControlFlowManager::Call(size_t& ip, int16_t rel)
 void ControlFlowManager::Ret(size_t& ip) 
 {
     size_t oldBP, returnIP;
-    _memory.LeaveStackFrame(oldBP, returnIP);
+    _memoryManager.LeaveStackFrame(oldBP, returnIP);
     _currentBP = oldBP;
     ip = returnIP;
 }

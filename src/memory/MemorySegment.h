@@ -207,14 +207,14 @@ public:
      * 
      * @return uint8_t* 메모리 데이터 포인터
      */
-    uint8_t* GetData() { return _memory.get(); }
+    uint8_t* GetData() { return _memoryManager.get(); }
     
     /**
      * @brief 메모리 데이터 포인터 획득 (읽기 전용)
      * 
      * @return const uint8_t* 메모리 데이터 포인터
      */
-    const uint8_t* GetData() const { return _memory.get(); }
+    const uint8_t* GetData() const { return _memoryManager.get(); }
     
 private:
     /**
@@ -227,7 +227,7 @@ private:
      */
     void _ValidateAccess(size_t offset, size_t size, MemoryAccessFlags flag) const;
 
-    std::unique_ptr<uint8_t[]> _memory; ///< 실제 메모리 저장 공간 (OS 힙에 할당)
+    std::unique_ptr<uint8_t[]> _memoryManager; ///< 실제 메모리 저장 공간 (OS 힙에 할당)
     size_t _size;                   ///< 메모리 크기
     MemorySegmentType _type;        ///< 세그먼트 유형
     uint8_t _accessFlags;           ///< 접근 권한 플래그

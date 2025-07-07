@@ -103,7 +103,7 @@ private:
     size_t _ip = 0;
     
     // 메모리 관리자
-    std::unique_ptr<Memory::MemoryManager> _memory;
+    std::unique_ptr<Memory::MemoryManager> _memoryManager;
     
     // 실행 플래그
     bool _running = false;

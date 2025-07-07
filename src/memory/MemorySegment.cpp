@@ -6,7 +6,7 @@ namespace DarkMatterVM::Memory
 
 /// MemorySegment 구현
 MemorySegment::MemorySegment(MemorySegmentType type, size_t size, uint8_t accessFlags)
-    : _memory(std::make_unique<uint8_t[]>(size)), _type(type), _size(size), _accessFlags(accessFlags) 
+    : _memoryManager(std::make_unique<uint8_t[]>(size)), _type(type), _size(size), _accessFlags(accessFlags) 
 {
 }
 
