@@ -89,7 +89,7 @@ struct OpcodeInfo {
  * @param op 정보를 조회할 명령어
  * @return 해당 명령어에 대한 OpcodeInfo 구조체
  */
-inline const OpcodeInfo& GetOpcodeInfo(Opcode op) 
+inline OpcodeInfo GetOpcodeInfo(Opcode op) 
 {
     static const OpcodeInfo invalidOpcode = {0, false, "INVALID"};
     

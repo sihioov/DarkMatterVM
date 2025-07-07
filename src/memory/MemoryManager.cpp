@@ -87,7 +87,10 @@ void MemoryManager::InitializeCode(const uint8_t* code, size_t size)
         throw std::runtime_error("MemoryManager: code size exceeds code segment");
     }
     
-    codeSegment.Write(0, size, code);
+    // 코드 구역은 실행 중 WRITE 권한이 없도록 설계되어 있으므로
+    // 초기 로딩 단계에서는 권한 체크를 우회해 직접 메모리에 복사한다.
+    // codeSegment.Write(0, size, code)
+    std::memcpy(codeSegment.GetData(), code, size);
 }
 
 // 스택 관련 메서드 구현
