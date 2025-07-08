@@ -23,7 +23,8 @@ enum class TranslationOption
     None = 0,
     Optimize = 1 << 0,      ///< 코드 최적화 활성화
     Debug = 1 << 1,         ///< 디버그 정보 포함
-    EmitComments = 1 << 2   ///< 바이트코드에 주석 포함
+    EmitComments = 1 << 2,   ///< 바이트코드에 주석 포함
+    Obfuscate   = 1 << 3    ///< 바이트코드 난독화(평탄화 등) 적용
 };
 
 /**
@@ -51,7 +52,7 @@ public:
      * 
      * @param options 변환 옵션
      */
-    Translator(int options = 0);
+    Translator(TranslationOption options = TranslationOption::None);
     
     /**
      * @brief 소멸자
@@ -125,6 +126,13 @@ private:
      * @param message 오류 메시지
      */
     void _SetError(const std::string& message);
+
+    /**
+     * @brief 바이트코드 난독화(예: 제어 흐름 평탄화) 적용
+     * @param bytecode 원본 바이트코드
+     * @return 난독화된 바이트코드 시퀀스
+     */
+    std::vector<uint8_t> _ApplyObfuscation(const std::vector<uint8_t>& bytecode);
 };
 
 } // namespace Translator

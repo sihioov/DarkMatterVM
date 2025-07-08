@@ -10,7 +10,7 @@ namespace Tests
 TestTranslator::TestTranslator() 
     : _totalTests(0), _passedTests(0), _failedTests(0)
 {
-    _translator = std::make_unique<Translator::Translator>();
+    _translator = std::make_unique<Translator::Translator>(Translator::TranslationOption::Obfuscate);
     _interpreter = std::make_unique<Engine::Interpreter>();
 }
 

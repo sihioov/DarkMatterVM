@@ -11,6 +11,8 @@
 #include "ast/nodes/ContainerNodes.h"
 #include "codegen/BytecodeBuilder.h"
 #include "assembler/Assembler.h"
+#include "../obfuscation/ObfuscationUtils.h"
+#include <random>
 
 namespace DarkMatterVM 
 {
@@ -262,8 +264,8 @@ public:
     }
 };
 
-Translator::Translator(int options)
-    : _options(options)
+Translator::Translator(TranslationOption options)
+    : _options(static_cast<int>(options))
 {
 }
 
@@ -314,6 +316,14 @@ TranslationResult Translator::TranslateFromCpp(const std::string& sourceCode, co
         if (!_GenerateBytecode(rootNode.get()))
         {
             return TranslationResult::CodeGenError;
+        }
+        
+        // 4단계: Obfuscation (선택)
+        if ((_options & static_cast<int>(TranslationOption::Obfuscate)) != 0)
+        {
+            Logger::Info("Translator", "4단계: 난독화 적용 시작");
+            _bytecode = _ApplyObfuscation(_bytecode);
+            Logger::Info("Translator", "난독화 적용 완료: " + std::to_string(_bytecode.size()) + " 바이트");
         }
         
         Logger::Info("Translator", "==== C++ 코드 변환 완료: " + std::to_string(_bytecode.size()) + " 바이트 ====");
@@ -434,6 +444,48 @@ void Translator::_SetError(const std::string& message)
     _lastError = message;
     Logger::Error("Translator", message);
 }
+
+// Obfuscation 헬퍼
+std::vector<uint8_t> DarkMatterVM::Translator::Translator::_ApplyObfuscation(const std::vector<uint8_t>& bytecode)
+{
+    auto hexDump = [](const std::vector<uint8_t>& data)
+    {
+        std::stringstream ss;
+        for (size_t i = 0; i < data.size(); ++i)
+        {
+            if (i % 16 == 0)
+            {
+                ss << "\n" << std::setw(4) << std::setfill('0') << std::hex << i << ": ";
+            }
+            ss << std::setw(2) << std::setfill('0') << std::hex << static_cast<int>(data[i]) << " ";
+        }
+        return ss.str();
+    };
+
+    Logger::Info("Obfuscation", "원본 바이트코드(" + std::to_string(bytecode.size()) + "B):" + hexDump(bytecode));
+
+    // 평탄화
+    auto obf = DarkMatterVM::Obfuscation::ObfuscationUtils::FlattenControlFlow(bytecode);
+
+    // XOR 암호화
+    std::mt19937 rng(DarkMatterVM::Obfuscation::ObfuscationUtils::GenerateSeed());
+    std::uniform_int_distribution<uint16_t> dist(1, 255); // 0은 피함
+    uint8_t key = static_cast<uint8_t>(dist(rng));
+
+    std::vector<uint8_t> enc;
+    enc.reserve(obf.size() + 2);
+    enc.push_back(0xF0); // magic
+    enc.push_back(key);
+    for (uint8_t b : obf)
+    {
+        enc.push_back(b ^ key);
+    }
+
+    Logger::Info("Obfuscation", "난독화 후(암호화 포함) 바이트코드(" + std::to_string(enc.size()) + "B):" + hexDump(enc));
+
+    return enc;
+}
+
 
 } // namespace Translator
 } // namespace DarkMatterVM

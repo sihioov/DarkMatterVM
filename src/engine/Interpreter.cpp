@@ -1,5 +1,6 @@
 #include "Interpreter.h"
 #include <iostream>
+#include <vector>
 #include <iomanip>
 #include <sstream>
 #include <common/Logger.h>
@@ -23,8 +24,24 @@ void Interpreter::LoadBytecode(const uint8_t* bytecode, size_t size)
     // 기존 상태 리셋
     Reset();
     
-    // 바이트코드를 코드 세그먼트에 로드
-    _memoryManager->InitializeCode(bytecode, size);
+    // 암호화 여부 확인 (프로토콜: 0xF0 | key | encrypted...)
+    std::vector<uint8_t> plain;
+    if (size >= 3 && bytecode[0] == 0xF0)
+    {
+        uint8_t key = bytecode[1];
+        plain.resize(size - 2);
+        for (size_t i = 0; i < plain.size(); ++i)
+        {
+            plain[i] = bytecode[i + 2] ^ key;
+        }
+        Logger::Info("Interpreter", "암호화된 바이트코드 감지 → key=0x" + std::to_string(key) + ", 길이=" + std::to_string(plain.size()));
+        _memoryManager->InitializeCode(plain.data(), plain.size());
+    }
+    else
+    {
+        // 암호화 안 됨
+        _memoryManager->InitializeCode(bytecode, size);
+    }
 }
 
 void Interpreter::Reset()

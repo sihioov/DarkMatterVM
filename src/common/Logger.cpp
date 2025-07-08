@@ -20,7 +20,6 @@ void Logger::Initialize(LogLevel level, bool toConsole, const std::string& logFi
 	_currentLevel = level;
 	_toConsole = toConsole;
 	
-	// 이미 열린 파일이 있으면 닫음
 	if (_logFile.is_open()) 
 	{
 		_logFile.close();
