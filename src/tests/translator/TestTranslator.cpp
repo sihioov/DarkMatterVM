@@ -28,6 +28,7 @@ bool TestTranslator::RunAllTests()
         {"바이트코드 생성", [this]() { return TestBytecodeGeneration(); }},
         {"바이트코드 실행", [this]() { return TestBytecodeExecution(); }},
         {"오류 처리", [this]() { return TestErrorHandling(); }}
+        ,{"난독화 무결성", [this]() { return TestObfuscationIntegrity(); }}
     };
     
     for (const auto& test : tests) 
@@ -210,13 +211,92 @@ bool TestTranslator::TestErrorHandling()
     return true;
 }
 
+bool TestTranslator::TestObfuscationIntegrity()
+{
+    std::string cppCode = R"(
+        int a = 10;
+        int b = 20;
+        int c = a + b;
+    )";
+
+    // 1) 난독화 Translator (멤버 _translator는 이미 Obfuscate 옵션 사용)
+    if (_translator->TranslateFromCpp(cppCode, "obf_module") != Translator::TranslationResult::Success)
+    {
+        LogTestResult("난독화 무결성", false, "Obfuscate 번역 실패");
+        return false;
+    }
+    auto obfCode = _translator->GetBytecode();
+
+    // 2) 클린 Translator (난독화 옵션 없음)
+    Translator::Translator cleanTr; // 옵션 없음
+    if (cleanTr.TranslateFromCpp(cppCode, "clean_module") != Translator::TranslationResult::Success)
+    {
+        LogTestResult("난독화 무결성", false, "Clean 번역 실패");
+        return false;
+    }
+    auto cleanCode = cleanTr.GetBytecode();
+
+    if (obfCode == cleanCode)
+    {
+        LogTestResult("난독화 무결성", false, "Obfuscation 결과가 원본과 동일");
+        return false;
+    }
+
+    // Execute both and compare result
+    try
+    {
+        // 난독화 바이트코드 실행
+        _interpreter->Reset();
+        _interpreter->LoadBytecode(obfCode.data(), obfCode.size());
+        int execStatus = _interpreter->Execute();
+        if (execStatus != 0)
+        {
+            Logger::Error("TestTranslator", "Interpreter 실행 반환값 !=0 (" + std::to_string(execStatus) + ")");
+            return false;
+        }
+        uint64_t resObf = _interpreter->GetReturnValue();
+
+        // 원본 바이트코드 실행
+        _interpreter->Reset();
+        _interpreter->LoadBytecode(cleanCode.data(), cleanCode.size());
+        execStatus = _interpreter->Execute();
+        if (execStatus != 0)
+        {
+            Logger::Error("TestTranslator", "Interpreter 실행 반환값 !=0 (" + std::to_string(execStatus) + ")");
+            return false;
+        }
+        uint64_t resClean = _interpreter->GetReturnValue();
+
+        if (resObf == resClean)
+        {
+            LogTestResult("난독화 무결성", true, "결과값=" + std::to_string(resClean));
+            return true;
+        }
+        else
+        {
+            LogTestResult("난독화 무결성", false, "Obf 결과=" + std::to_string(resObf) + ", Clean 결과=" + std::to_string(resClean));
+            return false;
+        }
+    }
+    catch(const std::exception& e)
+    {
+        LogTestResult("난독화 무결성", false, e.what());
+        return false;
+    }
+}
+
 // 헬퍼 메서드 구현들
 bool TestTranslator::ExecuteBytecode(const std::vector<uint8_t>& bytecode) 
 {
     try 
     {
         _interpreter->LoadBytecode(bytecode.data(), bytecode.size());
-        _interpreter->Execute();
+        int execStatus = _interpreter->Execute();
+        if (execStatus != 0)
+        {
+            Logger::Error("TestTranslator", "Interpreter 실행 반환값 !=0 (" + std::to_string(execStatus) + ")");
+            return false;
+        }
         return true;
     }
     catch (const std::exception& e) 

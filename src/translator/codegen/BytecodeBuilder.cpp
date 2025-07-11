@@ -257,11 +257,16 @@ void BytecodeBuilder::ProcessVariableDecl(const VariableDeclNode* node)
 		ProcessNode(initializer);
 		
 		Logger::Info("BytecodeBuilder", "    변수에 값 저장");
-		// 변수 주소를 스택에 푸시
+		// 현재 스택 top = 초기화 값
+
+		// ① 변수 주소를 스택에 푸시 (top → 주소)
 		EmitOpcode(Engine::Opcode::PUSH64);
 		EmitInt64(static_cast<int64_t>(_symbolTable[name].address));
-		
-		// 스택 맨 위 값을 해당 주소에 저장
+
+		// ② SWAP으로 값과 주소 순서 교환 (top → 값, 그 아래 → 주소)
+		EmitOpcode(Engine::Opcode::SWAP);
+
+		// ③ STORE64 (value pop -> address pop)
 		EmitOpcode(Engine::Opcode::STORE64);
 	}
 }

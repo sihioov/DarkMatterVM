@@ -297,11 +297,10 @@ void Interpreter::_Handle_POP()
 
 void Interpreter::_Handle_DUP()
 {
-    // 스택 최상위 값 읽기
-    uint64_t value = _memoryManager->PopStack();
-    
-    // 두 번 푸시하여 복제
-    _memoryManager->PushStack(value);
+    // 스택 최상위 값 조회 (포인터 변경 없음)
+    uint64_t value = _memoryManager->PeekStack();
+
+    // 값 복제: 한 번만 푸시하면 기존 값 + 복제 값 → 스택 깊이 +1
     _memoryManager->PushStack(value);
 }
 

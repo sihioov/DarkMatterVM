@@ -55,6 +55,7 @@ private:
     bool TestBytecodeGeneration();
     bool TestBytecodeExecution();
     bool TestErrorHandling();
+    bool TestObfuscationIntegrity();
     
     // 헬퍼 메서드들
     bool ExecuteBytecode(const std::vector<uint8_t>& bytecode);

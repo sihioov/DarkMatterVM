@@ -464,8 +464,30 @@ std::vector<uint8_t> DarkMatterVM::Translator::Translator::_ApplyObfuscation(con
 
     Logger::Info("Obfuscation", "원본 바이트코드(" + std::to_string(bytecode.size()) + "B):" + hexDump(bytecode));
 
-    // 평탄화
+    // 1) 제어 흐름 평탄화
     auto obf = DarkMatterVM::Obfuscation::ObfuscationUtils::FlattenControlFlow(bytecode);
+
+    // 1.5) XOR Junk 코드 삽입 (HALT 직전)
+    if (!obf.empty() && obf.back() == static_cast<uint8_t>(Engine::Opcode::HALT))
+    {
+        // Junk 생성: DUP, PUSH8 key, XOR, PUSH8 key, XOR, POP
+        std::mt19937 rng2(DarkMatterVM::Obfuscation::ObfuscationUtils::GenerateSeed());
+        std::uniform_int_distribution<int> dkey(1, 255);
+        uint8_t k = static_cast<uint8_t>(dkey(rng2));
+
+        std::vector<uint8_t> junk = {
+            // 스택 언더플로를 방지하기 위해 먼저 상수를 푸시한 뒤 DUP 수행
+            static_cast<uint8_t>(Engine::Opcode::PUSH8), k,           // 상수 푸시
+            static_cast<uint8_t>(Engine::Opcode::DUP),               // 상수를 복제
+            static_cast<uint8_t>(Engine::Opcode::XOR),               // 두 상수 XOR (결과 0)
+            static_cast<uint8_t>(Engine::Opcode::PUSH8), k,           // 다시 상수 푸시
+            static_cast<uint8_t>(Engine::Opcode::XOR),               // 0 XOR k = k (무의미)
+            static_cast<uint8_t>(Engine::Opcode::POP)                // 결과 제거하여 스택 균형 유지
+        };
+
+        obf.insert(obf.end() - 1, junk.begin(), junk.end());
+        Logger::Info("Obfuscation", "Junk(" + std::to_string(junk.size()) + "B) 삽입 완료, key=0x" + std::to_string(k));
+    }
 
     // XOR 암호화
     std::mt19937 rng(DarkMatterVM::Obfuscation::ObfuscationUtils::GenerateSeed());
