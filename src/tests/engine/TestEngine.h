@@ -54,6 +54,7 @@ private:
     bool TestErrorHandling();
     bool TestMemorySegments();
     bool TestInterpreterState();
+    bool TestFunctionCall();
     
     // 헬퍼 메서드들
     bool ExecuteBytecode(const std::vector<uint8_t>& bytecode, uint64_t expectedResult = 0);

@@ -5,8 +5,9 @@
 #include <memory>
 #include <unordered_map>
 #include <functional>
-#include "../../include/Opcodes.h"
-#include "../memory/MemoryManager.h"
+#include <controlflow/ControlFlowManager.h>
+#include <memory/MemoryManager.h>
+#include <Opcodes.h>
 
 namespace DarkMatterVM {
 namespace Engine {
@@ -37,7 +38,7 @@ public:
     ~Interpreter() = default;
     
     /**
-     * @brief 바이트코드 로드
+     * @brief 바이트코드 로드TestFunctionCall()
      * 
      * @param bytecode 바이트코드 버퍼
      * @param size 바이트코드 크기
@@ -110,6 +111,8 @@ private:
     
     // 반환 값
     uint64_t _returnValue = 0;
+    // 현재 스택 프레임의 베이스 포인터(BP)
+    size_t _basePointer = 0;
     
     /**
      * @brief 명령어 가져오기 (fetch)
