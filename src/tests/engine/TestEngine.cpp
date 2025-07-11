@@ -26,7 +26,8 @@ bool TestEngine::RunAllTests()
         {"큰 수 연산", [this]() { return TestLargeNumbers(); }},
         {"오류 처리", [this]() { return TestErrorHandling(); }},
         {"메모리 세그먼트", [this]() { return TestMemorySegments(); }},
-        {"인터프리터 상태", [this]() { return TestInterpreterState(); }}
+        {"인터프리터 상태", [this]() { return TestInterpreterState(); }},
+        {"함수 호출", [this]() { return TestFunctionCall(); }}
     };
     
     for (const auto& test : tests) 
@@ -61,6 +62,7 @@ bool TestEngine::RunTest(const std::string& testName)
     if (testName == "오류 처리") return TestErrorHandling();
     if (testName == "메모리 세그먼트") return TestMemorySegments();
     if (testName == "인터프리터 상태") return TestInterpreterState();
+    if (testName == "함수 호출") return TestFunctionCall();
     
     std::cout << "알 수 없는 테스트: " << testName << std::endl;
     return false;
@@ -190,6 +192,7 @@ bool TestEngine::TestMemorySegments()
         // 간단한 바이트코드를 로드하여 메모리 세그먼트가 정상 작동하는지 확인
         std::vector<uint8_t> bytecode = {
             static_cast<uint8_t>(Engine::Opcode::PUSH8), 42,
+            static_cast<uint8_t>(Engine::Opcode::PUSH8), 11,
             static_cast<uint8_t>(Engine::Opcode::HALT)
         };
         
@@ -197,7 +200,7 @@ bool TestEngine::TestMemorySegments()
         _interpreter->Execute();
         
         uint64_t result = _interpreter->GetReturnValue();
-        if (result == 42) 
+        if (result == 11) 
         {
             LogTestResult("메모리 세그먼트", true, "메모리 세그먼트 정상 작동");
             return true;
@@ -246,6 +249,30 @@ bool TestEngine::TestInterpreterState()
     
     LogTestResult("인터프리터 상태", true, "상태 관리 정상");
     return true;
+}
+
+bool TestEngine::TestFunctionCall()
+{
+    // main:
+    //   PUSH8 0x04 (func addr)
+    //   CALL
+    //   HALT
+    // func:
+    //   PUSH8 42
+    //   RET
+    std::vector<uint8_t> bytecode = {
+        // main
+        static_cast<uint8_t>(Engine::Opcode::PUSH8), 0x04,      // 함수 주소 (0x04)
+        static_cast<uint8_t>(Engine::Opcode::CALL),             // CALL
+        static_cast<uint8_t>(Engine::Opcode::HALT),             // HALT (리턴 후 종료)
+
+        // func (offset 0x06)
+        static_cast<uint8_t>(Engine::Opcode::PUSH8), 42,        // 결과 값 푸시
+        static_cast<uint8_t>(Engine::Opcode::SWAP),             // returnIP <-> result 스왑
+        static_cast<uint8_t>(Engine::Opcode::RET)               // RET (returnIP pop)
+    };
+
+    return ExecuteBytecode(bytecode, 42);
 }
 
 // 헬퍼 메서드 구현들
