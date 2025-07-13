@@ -27,8 +27,9 @@ bool TestTranslator::RunAllTests()
         {"복합 산술 연산", [this]() { return TestComplexArithmetic(); }},
         {"바이트코드 생성", [this]() { return TestBytecodeGeneration(); }},
         {"바이트코드 실행", [this]() { return TestBytecodeExecution(); }},
-        {"오류 처리", [this]() { return TestErrorHandling(); }}
-        ,{"난독화 무결성", [this]() { return TestObfuscationIntegrity(); }}
+        {"오류 처리", [this]() { return TestErrorHandling(); }},
+        {"Visitor 파이프라인", [this]() { return TestVisitorPipeline(); }},
+        {"난독화 무결성", [this]() { return TestObfuscationIntegrity(); }}
     };
     
     for (const auto& test : tests) 
@@ -63,7 +64,7 @@ bool TestTranslator::RunTest(const std::string& testName)
     if (testName == "바이트코드 생성") return TestBytecodeGeneration();
     if (testName == "바이트코드 실행") return TestBytecodeExecution();
     if (testName == "오류 처리") return TestErrorHandling();
-    
+    if (testName == "Visitor 파이프라인") return TestVisitorPipeline();
     std::cout << "알 수 없는 테스트: " << testName << std::endl;
     return false;
 }
@@ -283,6 +284,38 @@ bool TestTranslator::TestObfuscationIntegrity()
         LogTestResult("난독화 무결성", false, e.what());
         return false;
     }
+}
+
+bool TestTranslator::TestVisitorPipeline()
+{
+    std::string cppCode = R"(
+        int x = 42;
+    )";
+
+    Translator::Translator cleanTr;           // 옵션 None
+    auto result = cleanTr.TranslateFromCpp(cppCode, "visitor_module");
+    if (result != Translator::TranslationResult::Success)
+    {
+        LogTestResult("Visitor 파이프라인", false, "번역 실패");
+        return false;
+    }
+
+    const auto& bytecode = cleanTr.GetBytecode();
+    if (bytecode.empty())
+    {
+        LogTestResult("Visitor 파이프라인", false, "바이트코드가 비어있음");
+        return false;
+    }
+
+    // 첫 opcode 가 PUSH8 이어야 함 (정수 42 푸시)
+    if (bytecode[0] != static_cast<uint8_t>(Engine::Opcode::PUSH8))
+    {
+        LogTestResult("Visitor 파이프라인", false, "첫 Opcode 가 PUSH8 이 아님");
+        return false;
+    }
+
+    LogTestResult("Visitor 파이프라인", true, "Visitor 통해 PUSH8 opcode 생성 확인");
+    return true;
 }
 
 // 헬퍼 메서드 구현들
