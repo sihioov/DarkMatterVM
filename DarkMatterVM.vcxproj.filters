@@ -157,18 +157,6 @@
     <ClCompile Include="src\translator\ast\base\ASTNode.cpp">
       <Filter>src\tanslator\ast\base</Filter>
     </ClCompile>
-    <ClCompile Include="src\translator\ast\nodes\ContainerNodes.cpp">
-      <Filter>src\tanslator\ast\nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\translator\ast\nodes\LiteralNodes.cpp">
-      <Filter>src\tanslator\ast\nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\translator\ast\nodes\OperatorNodes.cpp">
-      <Filter>src\tanslator\ast\nodes</Filter>
-    </ClCompile>
-    <ClCompile Include="src\translator\ast\nodes\VariableNodes.cpp">
-      <Filter>src\tanslator\ast\nodes</Filter>
-    </ClCompile>
     <ClCompile Include="src\translator\ast\visitor\BytecodeGeneratorVisitor.cpp">
       <Filter>src\tanslator\ast\visitor</Filter>
     </ClCompile>
@@ -177,6 +165,45 @@
     </ClCompile>
     <ClCompile Include="src\tests\engine\TestEngine.cpp">
       <Filter>src\tests\engine</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\ast\nodes\BreakStatementNode.cpp">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\ast\nodes\ContainerNodes.cpp">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\ast\nodes\ContinueStatementNode.cpp">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\ast\nodes\ForLoopNode.cpp">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\ast\nodes\FunctionCallNode.cpp">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\ast\nodes\FunctionDeclNode.cpp">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\ast\nodes\IfStatementNode.cpp">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\ast\nodes\LiteralNodes.cpp">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\ast\nodes\OperatorNodes.cpp">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\ast\nodes\ParameterNode.cpp">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\ast\nodes\ReturnStatementNode.cpp">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\ast\nodes\VariableNodes.cpp">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClCompile>
+    <ClCompile Include="src\translator\ast\nodes\WhileLoopNode.cpp">
+      <Filter>src\tanslator\ast\nodes</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -264,18 +291,6 @@
     <ClInclude Include="src\translator\ast\base\OperatorTypes.h">
       <Filter>src\tanslator\ast\base</Filter>
     </ClInclude>
-    <ClInclude Include="src\translator\ast\nodes\ContainerNodes.h">
-      <Filter>src\tanslator\ast\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\translator\ast\nodes\LiteralNodes.h">
-      <Filter>src\tanslator\ast\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\translator\ast\nodes\OperatorNodes.h">
-      <Filter>src\tanslator\ast\nodes</Filter>
-    </ClInclude>
-    <ClInclude Include="src\translator\ast\nodes\VariableNodes.h">
-      <Filter>src\tanslator\ast\nodes</Filter>
-    </ClInclude>
     <ClInclude Include="src\translator\ast\visitor\ASTVisitor.h">
       <Filter>src\tanslator\ast\visitor</Filter>
     </ClInclude>
@@ -287,6 +302,45 @@
     </ClInclude>
     <ClInclude Include="src\tests\engine\TestEngine.h">
       <Filter>src\tests\engine</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\nodes\BreakStatementNode.h">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\nodes\ContainerNodes.h">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\nodes\ContinueStatementNode.h">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\nodes\ForLoopNode.h">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\nodes\FunctionCallNode.h">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\nodes\FunctionDeclNode.h">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\nodes\IfStatementNode.h">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\nodes\LiteralNodes.h">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\nodes\OperatorNodes.h">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\nodes\ParameterNode.h">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\nodes\ReturnStatementNode.h">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\nodes\VariableNodes.h">
+      <Filter>src\tanslator\ast\nodes</Filter>
+    </ClInclude>
+    <ClInclude Include="src\translator\ast\nodes\WhileLoopNode.h">
+      <Filter>src\tanslator\ast\nodes</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
